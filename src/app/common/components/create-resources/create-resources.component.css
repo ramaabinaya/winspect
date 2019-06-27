@@ -1,0 +1,66 @@
+.option-list-container {
+  height:400px;
+  overflow-y:scroll;
+  overflow-x:hidden;
+}
+.option-list-container::-webkit-scrollbar {
+  width: 5px;
+  padding-right: 10px;  
+  }
+.option-list-container::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+.option-list-container::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+.done-badge {
+  color: #fff !important;
+  background-color: var(--main-bg-color) !important;
+  line-height: 0 !important;
+  padding: 15px !important;
+}
+.resource-details{
+  box-shadow: 0 0 10px lightgray;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+.padding-alignment{
+  padding: 15px 15px 0px 15px;
+}
+.list-item-width{
+  width: 90% !important;
+}
+.add-list{
+width: 80% !important;
+}
+.list-group-item {
+  margin-top: 3px;
+  padding: 10px;
+}
+.opt-icons {
+  padding-top: 5px !important;
+}
+@media (min-width: 769px) {
+  #content-single {
+      width: 100%;
+      padding:1.5%;
+      min-height: none;
+      transition: all 0.3s;
+  }
+}
+@media(max-width: 768px) {
+  .option-list-mobile-container {
+    min-height: 70%;
+  }
+  .list-group-item {
+    margin-top: 1.5%;
+    padding: 2.5%;
+  }
+}
+.option-list-alignment{
+  box-shadow: 0 0 10px lightgray;
+  padding-right: 0px;
+  padding-left: 0px; 
+  padding-bottom: 15px!important;
+}

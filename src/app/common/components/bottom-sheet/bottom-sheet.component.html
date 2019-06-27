@@ -1,0 +1,16 @@
+<ng-template #bottom let-c="close" let-d="dismiss">
+  <div class="bottom-sheet-dialog">
+    <div class="modal-body bottom-sheet-body" *ngFor="let menu of bottomModalDetails;let i=index">
+      <div class="row bottom-sheet-text justify-content-center" (click)="onBottomSheetEvent(menu)"
+        (click)="d('Cross click')">
+        {{menu}}
+      </div>
+    </div>
+    <div class="modal-body bottom-sheet-body">
+      <div class="row bottom-sheet-text bottom-sheet-cancel justify-content-center" (click)="d('Cross click')"
+        (click)="onClose()">
+        Cancel
+      </div>
+    </div>
+  </div>
+</ng-template>

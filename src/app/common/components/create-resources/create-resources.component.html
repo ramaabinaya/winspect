@@ -1,0 +1,289 @@
+<div id="content-single">
+  <div class="container page-container" *ngIf="!mobileView">
+    <div class="row">
+      <div class="col-6 float-left">
+        <h4>Resources</h4>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-primary float-right" (click)="openResourceModel(resource)">
+          <i class="material-icons align-middle">add
+          </i>&nbsp;Create Resource</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-lg-12">
+        <div class="pagetip">
+          Add Resources, lets you create a resource by importing the data as csv file or entering the details
+          manually.
+          You can view the resource's data by
+          clicking on them. You
+          can also edit, delete the resource details and resource data.
+        </div>
+      </div>
+    </div><br />
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <button type="button" class="btn btn-primary float-left" (click)="uploadDialog = true">Add
+          options from CSV</button>
+      </div>
+      <div class="col-lg-6 col-md-6 float-right" *ngIf="!mobileView && resources?.length > 0">
+        <div class="global-search">
+          <input type="text" pInputText placeholder="Global Search" style="width:100%"
+            (input)="filterGlobal($event?.target?.value)">
+          <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+    <br />
+    <ng-container *ngIf="!mobileView && resources?.length > 0">
+      <div class="row">
+        <div [ngClass]="{'col-12 justify-content-center':!selectedResource, 'col-7': selectedResource}">
+          <p-table #resourceTableRef [columns]="cols" [value]="resources" [paginator]="true" [rows]="7"
+            [responsive]="true" dataKey="optionGroupName">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="table-header" [pSortableColumn]="'optionGroupName'">Resource Name
+                  <p-sortIcon [field]="'optionGroupName'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'modified'">Date
+                  <p-sortIcon [field]="'modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header">Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-resourcedata>
+              <tr class="table-cell cursor-pointer" (click)="showResourceData(resourcedata)">
+                <td>{{resourcedata?.optionGroupName | titlecase}}</td>
+                <td>{{resourcedata?.modified | date:'MM/dd/yy'}}</td>
+                <td class="table-cell">
+                  <i class="material-icons icon-font" pTooltip="Remove the Resource"
+                    (click)="deleteOptionGroup($event, resourcedata?.id)">delete_forever
+                  </i>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr class="text-center">
+                <td colspan="3">
+                  <h5>{{messages?.NO_RECORDS_FOUND}}</h5>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="col-5 resource-details" *ngIf='selectedResource'>
+          <div class="container padding-alignment">
+            <div class="row">
+              <div class="col-6" *ngIf="!optionSelected?.optionGroupName">
+                <span>{{selectedResource?.optionGroupName}}</span>
+              </div>
+              <div class="col-6" *ngIf="optionSelected?.optionGroupName">
+                <input type="text" id="resourceName" pInputText [(ngModel)]="selectedResource.editedName" />
+              </div>
+              <div class="col-6 float-right align-right">
+                <button class="btn btn-primary" *ngIf="!optionSelected?.optionGroupName"
+                  (click)="displayTextForEdit()">Edit</button>
+                <button class="btn btn-primary" *ngIf="optionSelected?.optionGroupName"
+                  (click)="editGroupName()">Ok</button>&nbsp;
+                <button class="btn btn-primary" (click)="addNewOptions()">
+                  Add
+                </button>&nbsp;
+                <button class="btn btn-primary" (click)="updateOptions()">
+                  Done
+                </button>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="container option-list-container" *ngIf=selectedResource>
+            <div class="row" *ngFor="let option of selectedResource?.optionChoices; let i = index">
+              <div class="col-12" *ngIf="option?.optionChoiceName !== null">
+                <li class="list-group-item" *ngIf="!option?.isEdited && !option?.isNew">
+                  <span>{{option?.optionChoiceName}}</span>
+                  <span><i class="material-icons icon-font float-right" (click)="onEdit(option)">edit</i></span>
+                  <span><i class="material-icons icon-font float-right"
+                      (click)="onDeleteClicked(option)">delete_forever</i></span>
+                </li>
+                <div class="list-group-item" *ngIf="option?.isEdited === true">
+                  <input type="text" id="optionValue" #rty pInputText [value]="option.optionChoiceName"
+                    class="list-item-width" (blur)="assignEditedName(rty, option)" />
+                  <i class="material-icons opt-icons icon-font float-right"
+                    (click)="option.isEdited = false;">check_circle</i>
+                </div>
+                <li class="list-group-item" *ngIf="option?.isNew === true">
+                  <input type="text" id="newOptionValue" #addedValue pInputText
+                    (blur)="assignEditedName(addedValue, option)" class="add-list" />
+                  <span><i class="material-icons opt-icons icon-font float-right" (click)="onClose(i)">close</i></span>
+                  <span><i class="material-icons opt-icons icon-font float-right"
+                      (click)="option.isNew = false;">check_circle</i></span>
+                </li>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12" *ngIf="selectedResource?.optionChoices?.length === 0">
+                <span>No Options added to this Resource.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <div class="container" *ngIf="!mobileView && resources?.length === 0">
+      <div class="row">
+        <h5>{{messages?.NO_RECORDS_FOUND}}</h5>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Start mobile view design -->
+  <div *ngIf="mobileView">
+    <app-top-navbar *ngIf="mobileView" [headerDetails]="navbarDetails" [sortingDetails]="sortingDetails"
+      (leftheaderClicked)="onNavigate()" (rightheaderClicked)="openResourceModel(resource)"
+      (keyValues)="searchValue($event)" (clear)="onClear()" (sorting)="sortReport($event)"></app-top-navbar>
+    <div id="resources" class="container-fluid mobileview-table-container scroll-content touch-scroll">
+      <table class="table table-hover" *ngIf='!selectedResource'>
+        <tbody>
+          <ng-container *ngFor="let resource of filteredReport;let id=index">
+            <tr (click)="showResourceData(resource)">
+              <td class="cursor-pointer">
+                <div class="titleText">
+                  {{resource?.created | date:'MM/dd/yy'}}
+                  <p class="alignright">
+                    <svg class="restoreicon float-right" (click)="onDeleteClicked(option)" width="32px" height="32px">
+                      <use xlink:href="assets/symbol-defs.svg#icon-delete"></use>
+                    </svg>
+                  </p>
+                </div>
+                <div class="inspectionText" innerHtml="{{ resource?.optionGroupName | titlecase}}"
+                  *ngIf="!searchedValue">
+                </div>
+                <div class="inspectionText" innerHtml="{{ resource?.optionGroupName | highlight: searchedValue }}"
+                  *ngIf="searchedValue">
+                </div>
+              </td>
+            </tr>
+            <p></p>
+          </ng-container>
+        </tbody>
+      </table>
+      <div *ngIf="filteredReport === null">
+        <i class="pi pi-spin pi-spinner mobileLoader"></i>
+      </div>
+      <div *ngIf="filteredReport?.length === 0 && !resultNotExist">
+        <h4 class="align-center">{{messages?.RESOURCE_IS_EMPTY}}</h4>
+      </div>
+      <div *ngIf="resultNotExist">
+        <h5 class="align-center">{{messages?.NO_RECORDS_FOUND}}</h5>
+      </div>
+
+      <div class="col-12 option-list-alignment" *ngIf='selectedResource'>
+        <div class="container padding-alignment">
+          <div class="row">
+            <div class="col-8 col-md-9" *ngIf="!optionSelected?.optionGroupName">
+              <span class="cursor-pointer" (click)="displayTextForEdit()">{{selectedResource?.optionGroupName}}</span>
+            </div>
+            <div class="col-8 col-md-9" *ngIf="optionSelected?.optionGroupName">
+              <input type="text" id="resourceName" pInputText [(ngModel)]="selectedResource.editedName"
+                (blur)="editGroupName()" appInput />
+            </div>
+            <span class="col-2 col-md-2 badge badge-primary done-badge" (click)="updateOptions()">Done</span>
+            <div class="col-2 col-md-1 align-right" ngbDropdown placement="bottom-right">
+              <i class="material-icons" id="filter-options" ngbDropdownToggle>more_vert</i>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+                <button class="dropdown-item" id="dropdownicon" (click)="addNewOptions()"><i
+                    class="material-icons dot-menu-action-icon">
+                    add</i>&nbsp;Add item</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="container option-list-mobile-container" *ngIf=selectedResource>
+          <div class="row" *ngFor="let option of selectedResource?.optionChoices; let i = index">
+            <div class="col-12" *ngIf="option?.optionChoiceName !== null">
+              <li class="list-group-item" *ngIf="!option?.isEdited && !option?.isNew">
+                <span>{{option?.optionChoiceName}}</span>
+                <span>
+                  <svg class="restoreicon float-right" (click)="onEdit(option)" width="22px" height="22px">
+                    <use xlink:href="assets/symbol-defs.svg#icon-edit"></use>
+                  </svg>
+                </span>
+                <span>
+                  <svg class="restoreicon float-right" (click)="onDeleteClicked(option)" width="22px" height="22px">
+                    <use xlink:href="assets/symbol-defs.svg#icon-delete"></use>
+                  </svg>
+                </span>
+              </li>
+              <li class="list-group-item" *ngIf="option?.isEdited === true">
+                <input type="text" id="optionValue" #rty pInputText [value]="option.optionChoiceName"
+                  (blur)="assignEditedName(rty, option)" class="list-item-width" appInput />
+                <i class="material-icons icon-font opt-icons float-right"
+                  (click)="option.isEdited = false;">check_circle</i>
+              </li>
+              <li class="list-group-item" *ngIf="option?.isNew === true">
+                <input type="text" id="newOptionValue" #addedValue pInputText
+                  (blur)="assignEditedName(addedValue, option)" class="add-list" appInput />
+                <span><i class="material-icons icon-font opt-icons float-right" (click)="onClose(i)">close</i></span>
+                <span><i class="material-icons icon-font opt-icons float-right"
+                    (click)="option.isNew = false;">check_circle</i></span>
+              </li>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12" *ngIf="selectedResource?.optionChoices?.length === 0">
+              <span>No Options added to this Resource.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End mobile view design -->
+</div>
+
+
+<!-- Start Create resource -->
+<ng-template #resource let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Create Resource</h4>
+    <button type="button" class="close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="createResourceForm">
+      <div class="form-group">
+        <label for="name">Resource Name</label>
+        <input type="text" pInputText formControlName="optionGroupName" class="form-control" appInput>
+        <span class="help-block error-message"
+          *ngIf="createResourceForm.get('optionGroupName').invalid && createResourceForm.get('optionGroupName').touched">
+          {{messages?.FIELD_REQUIRED}}</span>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="!createResourceForm.valid" (click)="onAddResource()"
+      (click)="d('Cross click')">Create</button>
+  </div>
+</ng-template>
+<!-- End Create resource -->
+
+<p-dialog header="Upload Data" modal="modal" [@.disabled]="true" [(visible)]="uploadDialog" [responsive]="true">
+  <div class="row">
+    <div class="col-12">
+      For Upload a file you should have the details in the specified format.
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <a class="text-link" href="../../../../assets/samplecsv/sample_Resource.csv">
+        You can download a sample file here..</a>
+    </div>
+  </div><br />
+  <div class="row justify-content-center">
+    <input type="file" class="uploadfiletext" accept=".csv" #file pInputText (change)="onUploadFileData($event)">
+  </div>
+</p-dialog>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

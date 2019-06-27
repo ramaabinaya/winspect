@@ -1,0 +1,27 @@
+<div id=content>
+  <div class="container device-list-container page-container">
+    <ng-container *ngIf="devices?.length > 0">
+      <div class="row header-text">
+        <div class="col-12 zero-padding">
+          Registered Devices ({{devices?.length}} of 10)
+        </div>
+      </div>
+      <div class="row device-name-list" *ngFor="let device of devices; let i = index;">
+        <div class="col-1 zero-padding">
+          <i class="material-icons icon-size">phone_iphone</i>
+        </div>
+        <div class="col-6 zero-padding">
+          {{device?.deviceName}}<br />
+          <span class="disabled-text">Registered on {{device?.created | date: 'dd MMM yyyy'}}</span>
+        </div>
+        <div class="col-5 zero-padding align-right">
+          <button class="btn btn-primary" (click)="onRemoveDevice(i, device?.id)"><i
+              class="material-icons align-middle">delete_forever</i>&nbsp;Remove</button>
+        </div>
+      </div>
+    </ng-container>
+    <div class="row justify-content-center" *ngIf="devices?.length === 0">
+      <h5>{{(messages | async)?.DEVICE_IS_EMPTY}}</h5>
+    </div>
+  </div>
+</div>

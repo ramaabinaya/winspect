@@ -1,0 +1,196 @@
+<app-top-navbar *ngIf="mobileView" [headerDetails]="navbarDetails" (leftheaderClicked)="onNavigate()"
+  (rightheaderClicked)="createPdf()"></app-top-navbar>
+<div class="text-center pdfLoader" *ngIf="displayLoader">
+  <i class="pi pi-spin pi-spinner pageLoader" style="font-size:4em"></i>
+</div>
+<div class="container tech-reports-container"
+  [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer':mobileView}">
+  <div class="row" appDropdown *ngIf="!mobileView && !archived && !disconnected && reportExist">
+    <div class="col-12 float-right">
+      <div class="dropdown float-right" appDropdown>
+        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">Export</button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item cursor-pointer" (click)="createPdf()">PDF</a>
+          <a class="dropdown-item" style="cursor: pointer" (click)="openEmailModel(sendEmail)">Email</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br />
+  <ng-template #sendEmail let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Send Email</h4>
+      <button type="button" class="close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="sendEmailForm">
+        <div class="form-group">
+          <label for="name">To</label>
+          <input type="email" pInputText formControlName="to" class="form-control">
+          <span class="error-message" *ngIf="sendEmailForm?.get('to')?.invalid && sendEmailForm?.get('to')?.touched">
+            <span class="error-message"
+              *ngIf="sendEmailForm?.get('to')?.hasError('required')">{{messages?.FIELD_REQUIRED}}</span>
+            <span class="error-message" *ngIf="sendEmailForm?.get('to')?.hasError('email')">
+              {{messages?.INVALID_EMAIL}}</span></span>
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" pInputText formControlName="subject" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea pInputTextarea formControlName="message" class="form-control"
+            placeholder="Your message here..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" [disabled]="!sendEmailForm?.valid"
+        (click)="createPdf(sendEmailForm?.value, mailNotification)" (click)="d('Cross click')">Send</button>
+    </div>
+  </ng-template>
+  <ng-container *ngFor="let section of reportSections">
+    <div class="card" *ngIf="section?.sectionName !== 'PHOTO DOCUMENTATION' && section?.questions?.length>0">
+      <div class="card-header" appCollapsed>
+        <div class="row card-link collapsed">
+          <a class="col-12" aria-expanded="true" data-toggle="collapse">
+            {{section?.sectionName}}
+          </a>
+        </div>
+      </div>
+      <div id="{{section?.sectionName}}" class="collapse show">
+        <div class="card-body top-align">
+          <ng-container *ngFor="let questions of section?.questions">
+            <ng-container
+              *ngIf="(questions?.answerRequiredYN === 1 || questions?.subCategory === 0) &&  questions?.dynamicFieldQuestionId == null">
+              <div class="row question-row">
+                <div class="col-12">{{questions?.questionName}}</div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <ng-container *ngFor="let answer of questions?.answers">
+                    <ng-container *ngIf="answer?.questionId == questions?.id && answer?.reportId == reportId ">
+                      <ng-container *ngIf="((answer?.answer_numeric || answer?.answer_text || answer?.answer_yn))">
+                        <ng-container *ngIf="(questions?.inputTypeId !== 3)">
+                          {{answer?.answer_numeric}}{{answer?.answer_text}}{{answer?.answer_yn}}</ng-container>
+                        <ng-container *ngIf="questions?.inputTypeId === 3">{{answer?.answer_text
+                          | date:'short'}}</ng-container>
+                      </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="answer?.optionChoiceAnswers">
+                      <ng-container *ngFor="let option of answer?.optionChoiceAnswers">
+                        {{option?.optionChoice?.optionChoicesValue}}
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="questions?.dynamicFieldQuestionId !== null">
+              <ng-container *ngFor="let question of dynamicFieldQuestions">
+                <ng-container *ngIf="question?.dynamicFieldQuestionId === questions?.dynamicFieldQuestionId">
+                  <ng-container *ngFor="let answer of question?.answers;let i=index">
+                    <div class="field-card card" style="margin-top:2%">
+                      <div class="card-header" appCollapsed>
+                        <div class="row card-link collapsed">
+                          <a class="col-md-12" aria-expanded="true" data-toggle="collapse">
+                            {{question?.inputTypesProperty?.element}} {{i+1}}
+                          </a>
+                        </div>
+                      </div>
+                      <div id="{{question?.inputTypesProperty?.element}}{{i}}" class="collapse show">
+                        <div class="card-body">
+                          <ng-container *ngFor="let que of answer?.value">
+                            <div class="row question-row"
+                              *ngIf="que?.value  || que?.optionChoiceAnswers?.length > 0 || que?.imageAnswers?.length > 0">
+                              <div class="col-12">{{que?.questionName}}</div>
+                            </div>
+                            <div class="row" *ngIf="que?.value">
+                              <div class="col-12">{{que?.value}}</div>
+                            </div>
+                            <div class="row" *ngIf="que?.optionChoiceAnswers">
+                              <ng-container *ngFor="let option of que?.optionChoiceAnswers">
+                                <div class="col-md-12" *ngIf="option?.optionChoice">
+                                  {{option?.optionChoice.optionChoicesValue}}
+                                </div>
+                              </ng-container>
+                            </div>
+                            <div class="row" *ngIf="que?.imageAnswers">
+                              <ng-container *ngFor="let image of que?.imageAnswers; let j=index">
+                                <img class="thumbnail-image cursor-pointer" *ngIf="image?.thumnailImage"
+                                  src="{{image?.thumnailImage}}" />
+                              </ng-container>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngFor="let image of images">
+    <div class="card">
+      <div class="card-header" appCollapsed>
+        <div class="row card-link collapsed">
+          <a class="col-12" aria-expanded="true" data-toggle="collapse">
+            {{image?.sectionName}}-Media
+          </a>
+        </div>
+      </div>
+      <div id="{{image?.sectionName}}" class="collapse show">
+        <div class="card-body">
+
+          <ng-container *ngFor="let imgSection of image?.img;let j=index">
+            <ng-container *ngIf="!disconnected">
+              <img class="thumbnail-image cursor-pointer" src="{{imgSection?.thumnailImage}}"
+                (click)="imageGallery(image?.sectionName,j)" />
+            </ng-container>
+            <ng-container *ngIf="disconnected">
+
+              <img class="thumbnail-image cursor-pointer" *ngIf="imgSection?.imageFileUri !== null"
+                src="{{imgSection?.imageFileUri}}" (click)="imageGallery(image?.sectionName,j)" />
+              <img class="thumbnail-image cursor-pointer" *ngIf="imgSection?.imageFileUri === null"
+                src="./assets/images/img_not_available_icon.jpg" (click)="imageGallery(image?.sectionName,j)" />
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <div class="text-center bold-text" *ngIf="reportExist === false && !disconnected">
+    {{messages?.EMPTY_REPORT}}
+  </div>
+  <div class="text-center bold-text" *ngIf="mobileView && reportExist === undefined && !disconnected">
+    <i class="pi pi-spin pi-spinner reportLoader" style="font-size:3em; margin-top: 60%"></i>
+  </div>
+  <div class="text-center bold-text" *ngIf="(!mobileView && reportExist === undefined && !disconnected)">
+    <i class="pi pi-spin pi-spinner reportLoader" style="font-size:4em;margin-top: 15%"></i>
+  </div>
+</div>
+<router-outlet></router-outlet>
+<ng-template #mailNotification let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Message </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{dialogInfo}}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="mobile-view-button" (click)="c('Close click')">Ok</button>
+  </div>
+</ng-template>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxEventEmitter)="dialogBoxAction($event)"
+  (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

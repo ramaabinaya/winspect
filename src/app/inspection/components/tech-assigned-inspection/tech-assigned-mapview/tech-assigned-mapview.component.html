@@ -1,0 +1,84 @@
+<app-top-navbar *ngIf="mobileView && !navigated" [headerDetails]="navbarDetails"
+  (leftheaderClicked)="onCancelInspection()"></app-top-navbar>
+<!-- <div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer':mobileView}"> -->
+<!-- <div class="container" *ngIf="!navigated && mobileView">
+    <div class="row">
+      <div class="col-12">
+        Please choose a wind Turbine for the client
+      </div>
+    </div>
+  </div> -->
+<div class="container" *ngIf="!navigated && !mobileView">
+  <div class="row">
+    <div class="col-lg-4 offset-lg-4 col-md-4 offset-md-4 info-window">
+      Select the Wind Turbine to Create Report
+    </div>
+  </div>
+</div>
+<div class="full-screen-map" *ngIf="!navigated && !disconnected && mobileView">
+  <p-gmap #gmap id="map" styleClass="responsive-height" [options]="options" [overlays]="overlays"
+    (onOverlayClick)="handleOverlayClick($event)" (onMapReady)="onMapReady($event)"></p-gmap>
+
+  <nav class="navbar fixed-bottom bg-light damageIndicatortray">
+    <div class="col-3">
+      <i class="pi pi-circle-on float-left" style="color:green">
+        <span class="icon-label">Good</span></i>
+    </div>
+    <div class="col-3">
+      <i class="pi pi-circle-on float-left" style="color:yellow">
+        <span class="icon-label">Low</span></i>
+    </div>
+    <div class="col-3">
+      <i class="pi pi-circle-on float-left" style="color:#ff8300">
+        <span class="icon-label">Medium</span></i>
+    </div>
+    <div class="col-3">
+      <i class="pi pi-circle-on float-left" style="color:red">
+        <span class="icon-label">High</span></i>
+    </div>
+  </nav>
+</div>
+
+<div *ngIf="disconnected && !navigated" class="container scroll-content">
+  <div class="row">
+    <div class="col-12"><label for="siteLocation">Wind Turbines:</label></div>
+    <div class="col-12">
+      <p-dropdown [style]="{'width':'100%'}" placeholder="Select a wind turbine" id="siteLocation"
+        [options]="siteLocations" (onChange)="optionSelected($event?.value)" optionLabel="latlng"></p-dropdown>
+    </div>
+  </div>
+</div>
+<!-- </div> -->
+<!-- <p-dialog header="Selected Wind Turbine" [(visible)]="display" modal="modal" [@.disabled]="true" [responsive]="true"
+  [width]="350" [minWidth]="200" [minY]="70">
+  <span *ngIf="bladeType ==='M'">Wind Turbine Selected for Report Creation <br /> {{title}}</span>
+  <span *ngIf="bladeType && bladeType !=='M'">Blade {{bladeType}} is selected for Report Creation<br /> {{title}}</span>
+  <p-footer>
+    <button type="button" pButton [ngClass]="{'btn':!mobileView,'mobile-view-button':mobileView}"
+      (click)="createReport()" label="Create Report"></button>
+  </p-footer>
+</p-dialog> -->
+
+<p-gmap *ngIf="!navigated && !disconnected && !mobileView" #gmap id="map" [style]="{'width':'100%','height':'530px'}"
+  [options]="options" [overlays]="overlays" (onOverlayClick)="handleOverlayClick($event)"
+  (onMapReady)="onMapReady($event)"></p-gmap>
+<app-tech-safety-inspection *ngIf="navigated " [turbineId]="turbineId" [assignedInspectionId]="assignedInspectionId"
+  [inspectionHeaderId]="inspectionHeaderId" [bladeType]="bladeType"></app-tech-safety-inspection>
+
+<p-dialog header="Choose Blade type" [(visible)]="bladeView" modal="modal" [@.disabled]="true" [responsive]="true"
+  [width]="350">
+  <span>Choose blade type for turbine Number:{{turbineId}}</span>
+  <img class="blade-icon" src="./assets/images/markedbladeicongreen.png" usemap="#markedbladeMap" />
+  <map name="markedbladeMap">
+    <area shape="poly" coords="116,119,143,112,171,117,172,68,159,24,142,10,129,17,115,68" title="Blade A"
+      (click)="onBladeSelected('A')">
+    <area shape="poly" coords="93,161,99,184,118,206,89,227,60,240,30,245,10,245,15,217,48,184" title="Blade B"
+      (click)="onBladeSelected('B')">
+    <area shape="poly" coords="190,160,186,186,168,208,228,239,257,232,273,238,259,202,234,181" title="Blade C"
+      (click)="onBladeSelected('C')">
+  </map>
+  <p-footer>
+    <button type="button" pButton [ngClass]="{'btn':!mobileView,'mobile-view-button':mobileView}"
+      (click)="bladeView = false" label="Cancel"></button>
+  </p-footer>
+</p-dialog>

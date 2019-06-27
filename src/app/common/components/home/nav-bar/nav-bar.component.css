@@ -1,0 +1,128 @@
+
+.navbar{
+  position: fixed;
+  width:100%;
+  z-index: 2000; 
+  background-color: var(--main-bg-color);
+}
+.dropdown-menu{
+  padding: 0px;
+  margin-top: 8px;
+  position: absolute;
+}
+.dropdown-item{
+  cursor: pointer;
+}
+.dropdown-item:active{
+  background-color: var(--main-bg-color);
+  color: white;
+  cursor: pointer;
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: white;
+}
+.nav-item{
+  padding-right: 10px;
+  cursor: pointer;
+}
+.col-2.admin-nav {
+  align-content: center;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+  min-width: 20% !important;
+}
+.col-4.tech-nav {
+  align-content: center;
+}
+.bottom-nav-icon {
+  display: block;
+  margin: auto;
+  width: 32px;
+  fill: #636363;
+  height: 32px;
+}
+
+/* Mobile layouts css */
+@media (min-width: 768px){
+  .navbar-expand-md .sidenav{
+    display: none;
+  }
+}
+@media (max-width: 767px){
+  .navbar-expand-md .navbar-nav{
+    display: none;
+  }
+  .navbar{
+    background-color: var(--main-bg-color);
+  }
+  .nav-link {
+    padding: 5%;
+  }
+}
+.navbar-dark {
+  color:var(--main-bg-color) !important;
+  cursor: pointer;
+  border-style:none;
+}
+.menu-link{
+  display:block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #cadde2;
+  padding-left: 10px;
+}
+.menu-list-group{
+  list-style: none;
+  padding-left: 20px;
+}
+.menu-list-group-item{
+  font-weight: bold;
+  color: var(--main-bg-color) !important;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+  .navbar.fixed-bottom.navbar-expand.bg-light a{
+    color: gray;
+    text-align: center;
+    font-size: 12px !important;
+}
+.navbar.fixed-bottom.navbar-expand.bg-light a.activeNav{
+  color:var(--main-bg-color) !important;
+}
+.navbar.fixed-bottom.navbar-expand.bg-light a.activeNav svg {
+  fill: #306fd3 !important;
+}
+nav.fixed-bottom{
+  text-align: center;
+  text-justify: inter-word;
+  z-index: 1000 !important;
+}
+nav{ 
+  text-align: left;
+  text-justify: inter-word;
+}
+/* New design change in navbar */
+.user-icon{
+  color:white;
+  font-size:35px;
+  margin-top: 5px !important;
+}
+.font-color{
+  color:white !important;
+  margin-top: 10px !important;
+}
+.bottom-nav {
+  display: flex;
+  flex-direction: column;
+}
+.bg-light {
+  background-color: #ffffff !important;
+  border-top: 1px solid #c4c4c4 !important;
+}
+@media(min-height: 740px) and (max-height: 815px) {
+  .bg-light {
+    padding-bottom: 25px !important;
+  }
+}
+
+  

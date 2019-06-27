@@ -1,0 +1,84 @@
+<div class="webViewContainer">
+  <div class="wrapper">
+    <app-filter *ngIf="showFilter" [table]="archivedUserTableRef" (tableFiltered)="getFilteredTable($event)"
+      (filterClosed)="showFilter = event"></app-filter>
+    <div id="content">
+      <div class="container-fluid page-container" *ngIf="archivedUsers !== null && responseReceived">
+        <ng-container *ngIf="archivedUsers?.length > 0">
+          <div class="row">
+            <div class="col-md-6 float-left">
+              <h3>Archived Users</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="pagetip">
+                This is the list of archived users. In the reports table selecting the restore icon will
+                activate the user account and move the user to the current user list.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="onShowFilter()">
+              <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search"
+                  (input)="UserGlobalSearch($event?.target?.value)" style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-12">
+              <p-table [columns]="cols" #archivedUserRef [value]="archivedUsers" [paginator]="true" [rows]="10"
+                class="ui-table">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="table-header" [pSortableColumn]="'userName'">User Name
+                      <p-sortIcon [field]="'userName'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'userRole?.name'">Role
+                      <p-sortIcon [field]="'userRole?.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'modified'">Date Archived
+                      <p-sortIcon [field]="'modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header">Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-archiveUser let-i="rowIndex">
+                  <tr class="break-word">
+                    <td>{{archiveUser?.userName | titlecase}}</td>
+                    <td>{{archiveUser?.userRole?.name | titlecase}}</td>
+                    <td> {{archiveUser?.modified|date:'MM/dd/yy'}}</td>
+                    <td>
+                      <i class="material-icons icon-font cursor-pointer" (click)="onRestoreUser(archiveUser)"
+                        pTooltip="Restore this User account">
+                        replay
+                      </i>&nbsp;
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr class="text-center">
+                    <td colspan="4">
+                      <h5>{{(messages | async)?.NO_RECORDS_FOUND }}</h5>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </ng-container>
+        <div class="row justify-content-center" *ngIf="archivedUsers?.length === 0">
+          <h4>{{(messages | async)?.ARCHIVED_LIST_IS_EMPTY }}</h4>
+        </div>
+      </div>
+      <div *ngIf="!responseReceived">
+        <i class="pi pi-spin pi-spinner webviewLoader"></i>
+      </div>
+    </div>
+  </div>
+</div>

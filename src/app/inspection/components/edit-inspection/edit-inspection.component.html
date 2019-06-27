@@ -1,0 +1,87 @@
+<div class="wrapper webViewContainer">
+  <app-filter *ngIf="showFilter" [table]="reportTableRef" (tableFiltered)="getFilteredTable($event)"
+    (filterClosed)="showFilter = event"></app-filter>
+  <div id="content">
+    <div class="container-fluid page-container" *ngIf="inspectionReports !== null">
+      <ng-container *ngIf="inspectionReports?.length > 0">
+        <div class="row">
+          <div class="col-md-6">
+            <h3>Edit Inspection</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="pagetip">
+              Edit existing reports that have the status of "In Progress".
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="showFilter = !showFilter">
+            <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+          <div class="col-lg-6 col-md-6 float-right">
+            <div class="global-search">
+              <input type="text" pInputText placeholder="Global Search"
+                (input)="onInspectionGlobalSearch($event?.target?.value)" style="width:100%">
+              <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="justify-content-center">
+          <p-table #reportTableRef [columns]="cols" [value]="inspectionReports" [paginator]="true" [rows]="10"
+            class="ui-table">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="table-header" [pSortableColumn]="'report.id'">Report ID
+                  <p-sortIcon [field]="'report.id'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'report.windturbineId'">TurbineId
+                  <p-sortIcon [field]="'report.windturbineId'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'id'">Report Name
+                  <p-sortIcon [field]="'id'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'report.modified'">Date Submitted
+                  <p-sortIcon [field]="'report.modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header">Status</th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-reports let-i="rowIndex">
+              <tr class="table-cell"
+                (click)="onReportSelectedToEdit(reports?.report?.id, reports?.inspectionHeaderId, reports?.inspectionStatusId)">
+                <td>{{reports?.report?.id}}</td>
+                <td>{{reports?.report?.windturbineId}}</td>
+                <td>{{reports?.report?.name | titlecase}}</td>
+                <td *ngIf="reports?.report?.modified && !disconnected">{{reports?.report?.modified |date: 'MM/dd/yy' }}
+                </td>
+                <td *ngIf="reports?.report?.modified && disconnected">{{reports?.report?.modified}}</td>
+                <td>{{reports?.inspectionStatus?.name}}</td>
+                <td class="mobileView" *ngIf="reports?.inspectionStatus?.name =='Completed'"><i
+                    class="pi pi-check-circle icon-font"></i></td>
+                <td class="mobileView" *ngIf="reports?.inspectionStatus?.name =='In progress'"><i
+                    class="pi pi-spinner icon-font"></i></td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr class="text-center">
+                <td colspan="5">
+                  <h5>{{(messages | async)?.NO_RECORDS_FOUND}}</h5>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="inspectionReports?.length === 0">
+        <h4 class="row justify-content-center">{{(messages | async)?.LIST_IS_EMPTY}}</h4>
+      </ng-container>
+    </div>
+    <div *ngIf="inspectionReports === null">
+      <i class="pi pi-spin pi-spinner webviewLoader"></i>
+    </div>
+  </div>
+</div>

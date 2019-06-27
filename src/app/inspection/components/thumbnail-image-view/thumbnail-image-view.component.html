@@ -1,0 +1,45 @@
+<div class="image-modal media-gallery">
+  <div class="media-header">
+    <span class="close" (click)="closeImageModal()">&times;</span></div>
+  <div class="media-body">
+    <ng-container *ngFor="let image of images">
+      <ng-container *ngIf="sectionName === image?.sectionName">
+        <ng-container *ngFor="let imgSection of image?.img;let j=index">
+          <ng-container *ngIf="!disconnected && imgId === j">
+            <div class="row justify-content-center img-description">{{imgSection?.description}}</div>
+            <img class="modal-content img-responsive" [src]="imgSection?.imageLocation">
+          </ng-container>
+          <ng-container *ngIf="disconnected &&imgId === j">
+            <div class="row justify-content-center img-description">{{imgSection?.description}}</div>
+            <img class="modal-content img-responsive" *ngIf="imgSection?.imageFileUri !== null" [src]="imgSection?.imageFileUri">
+            <img class="modal-content img-responsive" *ngIf="imgSection?.imageFileUri === null" src="./assets/images/img_not_available_icon.jpg">
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div class="row media-footer">
+    <ng-container *ngFor="let image of images">
+      <ng-container *ngIf="sectionName === image?.sectionName">
+        <div class="col-md-12 media-footer-title">
+          {{imgId + 1}} / {{image?.img?.length}}
+        </div>
+        <div class="col-md-12 media-footer-view">
+          <div class="media-thumb-view" [(appKeyUpListener)]="imgId" [count]="image?.img?.length">
+            <ng-container *ngFor="let sectionImg of image?.img;let k=index">
+              <ng-container *ngIf="!disconnected">
+                <img [src]="sectionImg?.thumnailImage" [ngClass]="{'active':k === imgId}" (click)="imgId = k">
+              </ng-container>
+              <ng-container *ngIf="disconnected">
+                <img class="modal-content img-responsive" *ngIf="sectionImg?.imageFileUri !== null" [ngClass]="{'active':k === imgId}"
+                  (click)="imgId = k" [src]="sectionImg?.imageFileUri">
+                <img class="modal-content img-responsive" *ngIf="sectionImg?.imageFileUri === null" [ngClass]="{'active':k === imgId}"
+                  (click)="imgId = k" src="./assets/images/img_not_available_icon.jpg">
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>

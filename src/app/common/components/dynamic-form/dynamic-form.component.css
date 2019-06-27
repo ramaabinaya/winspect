@@ -1,0 +1,29 @@
+.button-dynamic.ui-button {
+  margin-bottom: 10px;
+  margin-right: 10px;
+  padding: 5px;
+}
+.ui-fluid .ui-dropdown {
+  width:100% !important;
+  height: 40px;
+}
+.dynamic-form label {
+  display: inline-block;
+  margin-top: 15px !important;
+  margin-bottom: 0px !important;
+}
+.dynamic-form .ui-chkbox .ui-chkbox-box {
+  margin-top: 15px !important;
+}
+label.ui-dropdown-label, label.ui-radiobutton-label {
+  margin-top: 0px !important;
+}
+.ui-fluid .ui-message {
+    display: inline-block;
+    margin: 5px 0px 0px -40px;
+}
+.container-fluid.form-container {
+  padding-right: 0px !important;
+  padding-left: 0px !important;
+}
+

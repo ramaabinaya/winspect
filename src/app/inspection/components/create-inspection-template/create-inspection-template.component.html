@@ -1,0 +1,434 @@
+<div class="ui-grid ui-grid-pad ui-grid-responsiv page-container" [ngClass]="{'mobileViewContainer':mobileView}"
+  *ngIf="!formPreview && !sectionView">
+  <app-top-navbar [headerDetails]="navbarDetails" (leftheaderClicked)="onNavigate('L')"
+    (rightheaderClicked)="onNavigate('R')" *ngIf="mobileView"></app-top-navbar>
+  <div class="container-fluid mobile-template-container">
+    <div class="row tab-section" *ngIf="mobileView">
+      <div class="col-6" [ngClass]="{'activeTab': firstTab}" (click)="onTabChanged(1);firstTab = true">Fields</div>
+      <div class="col-6" [ngClass]="{'activeTab': !firstTab}" (click)="onTabChanged(2);firstTab = false">Details</div>
+    </div>
+    <div class="row section-description" (click)="sectionView = true;" *ngIf="mobileView && tabIndex === 1">
+      <div class="col-6 text-left">
+        Section - {{propertySectionId + 1 }} of {{inspectionSections?.length}}
+      </div>
+      <div class="col-6 text-right">
+        {{currentInspection?.sectionName | titlecase}}
+      </div>
+    </div>
+
+    <div class="container-view scroll-content touch-scroll" [ngClass]="{'container-fluid':mobileView}"
+      *ngIf="tabIndex === 1 || !mobileView">
+      <div [ngClass]="{'row':mobileView,'ui-grid-row':!mobileView}">
+        <div class="container-fluid card content-fixed ui-grid-col-3" style="border-right:0 none" *ngIf="!mobileView">
+          <app-custom-inspection-template></app-custom-inspection-template>
+          <br />
+          <ul class="inputTypeContainer" *ngIf="inputTypes!== undefined">
+            <ng-container *ngFor="let inputtype of inputTypes">
+              <ng-container *ngIf="inputtype?.inputTypeName !== 'ButtonModel' && inputtype?.inputTypeName !== 'DynamicSubcategoryModel' && inputtype?.inputTypeName !== 'DynamicRatingModel' &&
+             inputtype?.inputTypeName !== 'DynamicCheckboxGroupModel'">
+                <!--<li class="ui-state-default ui-helper-clearfix" [pDraggable]="inputTypes" (onDragStart)="dragStart(inputtype)" (onDragEnd)="dragEnd(inputtype)">-->
+                <li class="ui-helper-clearfix input-items"
+                  *ngIf="(dynamicFieldId!==null && inputtype?.inputTypeName!== 'DynamicFieldModel') || dynamicFieldId===null"
+                  (pan)="onPan($event)" (panstart)="onPanStart($event)" (panmove)="onPanMove($event)"
+                  (panend)="onPanEnd($event, inputtype)" (tap)="onPanEnd($event, inputtype)">
+                  <div class="control row">
+                    <i class="col-md-2 material-icons float-left" aria-hidden="true">{{inputtype?.iconName}}</i>
+                    <span class="col-md-8"> {{inputtype?.displayName | titlecase}} </span>
+                    <i pTooltip="{{inputtype?.description}}" class="col-md-2 pi pi-info-circle"></i>
+                  </div>
+                </li>
+              </ng-container>
+            </ng-container>
+          </ul>
+        </div>
+
+        <div class="relative-content" [ngClass]="{'ui-grid-col-9':!mobileView}">
+          <div class="container-fluid row"
+            [ngClass]="{'disableClick':!inspectionSections && inspectionSections?.length <=0}" *ngIf="!mobileView">
+            <div class="col-md-4">
+              <div class="default-button" pTooltip="Click to edit the section name."
+                (click)="currentInspection.nameEdited=true">
+                Section : {{currentInspection?.sectionName | titlecase}}</div>
+
+            </div>
+            <div class="col-md-4">
+              <div class="default-button preview-btn" (click)="formPreview = true;">Preview</div>
+            </div>
+            <div class="col-md-4">
+              <div class="dropdown" appDropdown>
+                <div class="default-button dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">Sections</div>
+                <div class="dropdown-menu dropdown-menu-right dropdown-scroll" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item float-left" *ngFor="let section of inspectionSections;let id=index"
+                    style="cursor:pointer" (click)="changeCurrentSection(id)">
+                    {{section?.sectionName | titlecase}}
+                    <i class="icon pi pi-trash float-right" (click)="deleteSection($event,id)"></i>
+                  </a>
+                  <button pButton class="btn" style="margin:10px auto 10px 30px" type="button" label="Add New Section"
+                    (click)="addNewSection()"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p-dialog header="Edit Section Name" [@.disabled]="true" [(visible)]="currentInspection.nameEdited">
+            <input type="text" id="editSecName" pInputText [value]="currentInspection?.sectionName" #name />
+            <p-footer>
+              <button type="button" class="btn" label="Edit" pButton (click)="editSectionName(name?.value)"></button>
+            </p-footer>
+          </p-dialog>
+          <div class="container-fluid row justify-content-center text-center info-text"
+            *ngIf="!draggedInputType && !mobileView">
+            <span class="container row" style="margin-left:auto;margin-top: 20px;"
+              *ngIf="!inspectionSections && inspectionSections?.length <= 0">
+              First Create Inspection to View the Section Details!</span><br />
+            Click to add or drag and drop items from left<br /> side menu to build your checklist.<br />
+          </div>
+          <div *ngIf="draggedInputType" class="container-fluid draggedcontrols">
+            <form [formGroup]="inputPropertiesForm" *ngIf="inputPropertiesForm!=undefined">
+              <div formArrayName="sections"
+                *ngFor="let section of inputPropertiesForm?.get('sections')['controls'];let i=index">
+                <div [formGroupName]="i" *ngIf="propertySectionId === i">
+                  <div formArrayName="draggedcontrols" class="container-fluid"
+                    *ngFor="let control of section?.get('draggedcontrols')['controls'];let id=index">
+                    <div class="row accordion-div" [formGroupName]="id">
+                      <div class="col-12 card card-template" style="padding-left: 0px !important;
+                    padding-right: 0px !important;">
+                        <div class="card-header cursor-pointer" appCollapsed
+                          (appCollapsedChange)="onTabOpen($event,id)">
+                          <div class="row collapsed" (tabClosed)="onTabClose($event,id)" style="padding-left: 0px !important;
+                        padding-right: 0px !important;margin-left: 0px !important;margin-right: 0px !important;">
+                            <div class="col-1" style="padding-left: 0px !important;
+                          padding-right: 0px !important;">
+                              <i class="material-icons question-icon">{{draggedFormControls[id]?.iconName}}</i>
+                            </div>
+                            <div class="col-11">
+                              <a aria-expanded="true" data-toggle="collapse">
+                                Click to enter information.
+                              </a>
+                              <i class="material-icons cancel-icon float-right"
+                                (click)="onDeleteQuestion($event, i,id,null)">cancel_presentation</i>
+                            </div>
+                            <!-- <div class="col-2 float-right" style="padding-left: 0px !important;
+                          padding-right: 0px !important;">
+                            <i class="material-icons cancel-icon"
+                              (click)="onDeleteQuestion($event, i,id,null)">cancel_presentation</i>
+                          </div> -->
+                          </div>
+                        </div>
+                        <div class="container-fluid collapse">
+                          <div class="col-12 justify-content-center" style="padding-left: 0px;padding-right: 0px;">
+                            <div formArrayName="properties"
+                              *ngFor="let property of control?.get('properties')['controls'];let pid=index"
+                              style="display:block" class="ui-grid-row justify-content-center">
+                              <div *ngIf="property">
+                                <div
+                                  *ngIf="!property['controls'] || (draggedFormControls && inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'stringarray')">
+
+                                  <input type="checkbox" class="form-check-input"
+                                    *ngIf="inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'checkbox'"
+                                    [formControlName]="pid"
+                                    (blur)="onTypeQuestion(id,pid,null,null,draggedFormControls[id]?.inputTypeName)"
+                                    style="margin-left: 0px;">
+                                  <label
+                                    [ngStyle]="{'margin-left': inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'checkbox'? '20px' : '0px'}">
+                                    {{inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyName
+                                  | titlecase}} </label>
+
+                                  <textarea type="text"
+                                    *ngIf="draggedFormControls && inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'string'"
+                                    class="form-control" placeholder="Question text"
+                                    (blur)="onTypeQuestion(id,pid,null,null,draggedFormControls[id]?.inputTypeName)"
+                                    [formControlName]="pid" style="margin-bottom:0px" pInputTextArea appInput
+                                    [navbarType]="'BottomInputlistContainer'" appInput
+                                    [navbarType]="'BottomInputlistContainer'"></textarea>
+
+
+                                  <input type="number"
+                                    *ngIf="draggedFormControls && inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'number'"
+                                    class="form-control" pInputText
+                                    (blur)="onTypeQuestion(id,pid,null,null,draggedFormControls[id]?.inputTypeName)"
+                                    [formControlName]="pid" appInput [navbarType]="'BottomInputlistContainer'" /><br />
+
+                                  <ng-container
+                                    *ngIf="draggedFormControls && inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'radio'">
+                                    <input type="radio" [formControlName]="pid" value="Fixed Options"
+                                      [checked]="draggedFormControls[id]?.selectedOption === 'Fixed Options'"
+                                      (change)="onOptionTypeSelected(draggedFormControls[id]?.inputTypeName, id, pid, null,null, $event?.target?.value)">&nbsp;Fixed
+                                    Options<br />
+                                    <ng-container *ngIf="resources?.length > 0">
+                                      <input type="radio" [formControlName]="pid" value="Options From Resource"
+                                        [checked]="draggedFormControls[id]?.selectedOption === 'Options From Resource'"
+                                        (change)="onOptionTypeSelected(draggedFormControls[id]?.inputTypeName, id, pid, null,null, $event?.target?.value)">&nbsp;Options
+                                      From Resource<br />
+                                    </ng-container>
+                                  </ng-container>
+                                  <ng-container
+                                    *ngIf="draggedFormControls && inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType === 'stringarray'">
+
+                                    <ng-container *ngIf="draggedFormControls[id]?.selectedOption === 'Fixed Options'">
+                                      <button pButton class="btn" type="button" label="Add Options"
+                                        (click)="onTypeQuestion(id,pid,null,null,draggedFormControls[id]?.inputTypeName)"></button>
+                                    </ng-container>
+                                    <ng-container
+                                      *ngIf="draggedFormControls[id]?.selectedOption === 'Options From Resource'">
+                                      <p-dropdown [options]="resources" optionLabel="optionGroupName"
+                                        [formControlName]="pid" (onChange)="getOptionGroup($event?.value)">
+                                      </p-dropdown>
+                                    </ng-container>
+                                    <br /><br />
+                                    <p-dialog header="Options" [(visible)]="optiondialog"
+                                      *ngIf="id === currentInspection?.currentQuestionId" [@.disabled]="true"
+                                      modal="modal" [closable]="true">
+                                      <div class="row col-12" id="addoptions">
+                                        <button type="button" class="btn" label="Add Option"
+                                          (click)="addOptions(id, pid, null,null)" pButton></button>
+                                        &nbsp; &nbsp;
+                                        <button type="button" class="btn" style="background-color:green;float:right"
+                                          label="Done" (click)="saveOptions(id,pid,null,null)" pButton></button>
+                                      </div>
+                                      <div class="row table-bordered optiondialog">
+                                        <table class="table table-bordered col-12">
+                                          <tr class="text-center header">
+                                            <th>Label</th>
+                                            <th>Value</th>
+                                            <th></th>
+                                          </tr>
+                                          <ng-container [formGroupName]="pid"
+                                            *ngIf="property?.get('options')!==null && property?.get('options')['controls']?.length>0">
+
+                                            <tr class="text-center" formArrayName="options"
+                                              *ngFor="let option of property?.get('options')['controls'];let oid = index">
+                                              <ng-container [formGroupName]="oid">
+                                                <td><input type="text" formControlName="optionChoiceLabel"
+                                                    placeholder="Option Label" pInputText appInput
+                                                    [navbarType]="'BottomInputlistContainer'" /></td>
+                                                <td><input type="text" formControlName="optionChoiceValue"
+                                                    placeholder="Option Value" pInputText appInput
+                                                    [navbarType]="'BottomInputlistContainer'" /></td>
+                                                <td>
+                                                  <button type="button" style="background-color:red"
+                                                    (click)="removeOptions(id, pid, null,null, oid,'remove')" label="X"
+                                                    pButton></button>
+                                                </td>
+                                              </ng-container>
+                                            </tr>
+                                          </ng-container>
+                                        </table>
+                                      </div>
+                                    </p-dialog>
+                                  </ng-container>
+                                </div>
+                                <div [formArrayName]="pid"
+                                  *ngIf="property['controls']?.length > 0 
+                                && inputTypeProperties[draggedFormControls[id]?.inputTypeName][pid]?.propertyType !== 'stringarray'">
+                                  <div *ngFor="let dynamicCtrl of property['controls'];let cidx=index">
+                                    <div class="col-12 card card-template"
+                                      *ngIf="draggedFormControls?.length>0 && draggedFormControls[id]?.dynamicPro"
+                                      style="padding-left: 0px !important;
+                                    padding-right: 0px !important;">
+                                      <div class="card-header cursor-pointer" appCollapsed>
+                                        <div class="row collapsed"
+                                          style="padding-left: 0px !important;
+                                      padding-right: 0px !important;margin-left: 0px !important;margin-right: 0px !important;">
+                                          <div class="col-1 float-left" style="padding-left: 0px !important;
+                                        padding-right: 0px !important;">
+                                            <i
+                                              class="material-icons question-icon">{{draggedFormControls[id]?.dynamicPro[cidx]?.iconName}}</i>
+                                          </div>
+                                          <div class="col-11">
+                                            <a aria-expanded="true" data-toggle="collapse">
+                                              Click to enter information.
+                                            </a>
+                                            <i class="material-icons cancel-icon-dynamic float-right"
+                                              (click)="onDeleteQuestion($event,i,id,cidx)">cancel_presentation</i>
+                                          </div>
+                                          <!-- <div class="col-1 float-right">
+                                          <i class="material-icons cancel-icon-dynamic float-right"
+                                            (click)="onDeleteQuestion($event,i,id,cidx)">cancel_presentation</i>
+                                        </div> -->
+                                        </div>
+                                      </div>
+                                      <div class="container-fluid collapse" style="border-color:1px solid gray"
+                                        [formGroupName]="cidx">
+                                        <div formArrayName="dynamicproperties"
+                                          *ngFor="let dynamicproperty of dynamicCtrl?.get('dynamicproperties')['controls'];let cid=index"
+                                          style="display:block" class="ui-grid-row justify-content-center">
+                                          <input type="checkbox" class="form-check-input"
+                                            *ngIf="inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyType === 'checkbox'"
+                                            [formControlName]="cid"
+                                            (blur)="onTypeQuestion(id,pid,cidx,cid,draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName)"
+                                            style="margin-left: 0px;">
+                                          <label
+                                            [ngStyle]="{'margin-left':inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyType === 'checkbox'? '20px' : '0px'}">{{inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyName
+                                          | titlecase}} </label>
+
+                                          <textarea type="text"
+                                            *ngIf="inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyType === 'string'"
+                                            class="form-control" placeholder="Question text"
+                                            (blur)="onTypeQuestion(id,pid,cidx,cid,draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName)"
+                                            [formControlName]="cid" style="margin-bottom:20px" pInputTextArea appInput
+                                            [navbarType]="'BottomInputlistContainer'"></textarea>
+
+                                          <input type="number"
+                                            *ngIf="inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyType === 'number'"
+                                            class="form-control" pInputText
+                                            (blur)="onTypeQuestion(id,pid,cidx,cid,draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName)"
+                                            [formControlName]="cid" appInput
+                                            [navbarType]="'BottomInputlistContainer'" /><br />
+
+                                          <ng-container
+                                            *ngIf="inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyType === 'radio'">
+                                            <input type="radio" [formControlName]="cid" value="Fixed Options"
+                                              [checked]="draggedFormControls[id]?.dynamicPro[cidx]?.selectedOption === 'Fixed Options'"
+                                              (change)="onOptionTypeSelected(draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName, id, pid, cidx, cid, $event?.target?.value)">Fixed
+                                            Options<br />
+                                            <ng-container *ngIf="resources?.length > 0">
+                                              <input type="radio" [formControlName]="cid" value="Options From Resource"
+                                                [checked]="draggedFormControls[id]?.dynamicPro[cidx]?.selectedOption === 'Options From Resource'"
+                                                (change)="onOptionTypeSelected(draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName, id, pid, cidx, cid, $event?.target?.value)">Options
+                                              From Resource
+                                            </ng-container>
+                                          </ng-container>
+                                          <ng-container
+                                            *ngIf="inputTypeProperties[draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName][cid]?.propertyType === 'stringarray'">
+                                            <ng-container
+                                              *ngIf="draggedFormControls[id]?.dynamicPro[cidx]?.selectedOption === 'Fixed Options'">
+                                              <br /><br />
+                                              <button pButton class="btn" type="button" label="Add Options"
+                                                (click)="onTypeQuestion(id,pid,cidx,cid,draggedFormControls[id]?.dynamicPro[cidx]?.inputTypeName)"></button>
+                                            </ng-container>
+                                            <ng-container
+                                              *ngIf="draggedFormControls[id]?.dynamicPro[cidx]?.selectedOption === 'Options From Resource'">
+                                              <br /><br />
+                                              <p-dropdown [options]="resources" [formControlName]="cid"
+                                                optionLabel="optionGroupName"
+                                                (onChange)="getOptionGroup($event?.value)">
+                                              </p-dropdown>
+                                            </ng-container>
+                                            <br /><br />
+                                            <p-dialog header="Options" [(visible)]="optiondialog"
+                                              *ngIf="cidx === currentInspection?.currentQuestionId" [@.disabled]="true"
+                                              modal="modal" [closable]="true">
+                                              <div class="row col-12">
+                                                <button type="button" class="btn float-left" label="Add Option"
+                                                  (click)="addOptions(id, pid, cidx,cid)" pButton></button>&nbsp;&nbsp;
+                                                <button type="button" class="btn btn-success"
+                                                  style="background-color:green;float:right" label="Done"
+                                                  (click)="saveOptions(id,pid,cidx,cid)" pButton></button>
+                                              </div>
+                                              <div class="table-bordered optiondialog">
+                                                <table class="table table-bordered col-12">
+                                                  <tr class="text-center header">
+                                                    <th>Label</th>
+                                                    <th>Value</th>
+                                                    <th></th>
+                                                  </tr>
+                                                  <ng-container [formGroupName]="cid"
+                                                    *ngIf="dynamicproperty?.get('options')!==null && dynamicproperty?.get('options')['controls']?.length>0">
+                                                    <tr class="text-center" formArrayName="options"
+                                                      *ngFor="let option of dynamicproperty?.get('options')['controls'];let oid1 = index">
+                                                      <ng-container [formGroupName]="oid1">
+                                                        <td><input type="text" formControlName="optionChoiceLabel"
+                                                            placeholder="Option Label" pInputText appInput
+                                                            [navbarType]="'BottomInputlistContainer'" /></td>
+                                                        <td><input type="text" formControlName="optionChoiceValue"
+                                                            placeholder="Option Value" pInputText appInput
+                                                            [navbarType]="'BottomInputlistContainer'" /></td>
+                                                        <td><button type="button" style="background-color:red"
+                                                            (click)="removeOptions(id, pid, cidx, cid, oid1)" label="X"
+                                                            pButton></button></td>
+                                                      </ng-container>
+                                                    </tr>
+                                                  </ng-container>
+                                                </table>
+                                              </div>
+                                            </p-dialog>
+                                          </ng-container>
+                                        </div>
+                                        <button class="btn" class="btn" pButton label="Save"
+                                          (click)="saveDetails(id,cidx)"></button>
+                                        <br /><br />
+                                      </div>
+                                    </div><br />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <button class="btn" pButton label="Save" (click)="saveDetails(id,null)"></button>
+                          <br /><br />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div [ngClass]="{'container-fluid':mobileView}" *ngIf="tabIndex === 2 && mobileView">
+    <app-custom-inspection-template [inspectionHeaderId]="currentInspection?.inspectionHeaderId">
+    </app-custom-inspection-template>
+  </div>
+</div>
+<div class="bottom-container fixed-bottom" [ngClass]="{'mobileViewContainer':mobileView}"
+  *ngIf="mobileView && tabIndex === 1 && !formPreview && !sectionView  && displayBottomContainer === 'BottomInputlistContainer'"
+  [ngStyle]="{'border-top': viewFieldList ? '1px solid #c4c4c4' : 'none'}">
+  <div class="row justify-content-center tooltip" *ngIf="!viewFieldList">
+    <i class="material-icons plus-circle" (click)="viewFieldList = true;">add
+    </i>
+    <span class="tooltiptext" *ngIf="!draggedFormControls || draggedFormControls?.length <= 0">Tap to add an
+      item</span>
+  </div>
+  <div class="container-fluid" *ngIf="viewFieldList && inputTypes !== undefined">
+    <div class="row">
+      <div class="col-12">
+        <a class="float-right textView" (click)="viewFieldList = false;">Done</a>
+      </div>
+    </div>
+    <div class="field-view-card" *ngIf="viewFieldList && inputTypes !== undefined">
+      <div class="field-view">
+        <div class="field-list">
+          <ng-container *ngFor="let inputtype of inputTypes">
+            <ng-container
+              *ngIf="inputtype?.inputTypeName !== 'ButtonModel' && inputtype?.inputTypeName !== 'DynamicSubcategoryModel' && inputtype?.inputTypeName !== 'DynamicCheckboxGroupModel' && inputtype?.inputTypeName !== 'DynamicRatingModel'">
+              <div class="col-1 field-item-view"
+                *ngIf="(dynamicFieldId!==null && inputtype?.inputTypeName!== 'DynamicFieldModel') || dynamicFieldId===null">
+                <button type="button" class="btn btn-info btn-circle btn-send" (click)="onPanEnd($event,inputtype)"
+                  (panend)="onPanEnd($event,inputtype)"><i class="material-icons" style="color: white"
+                    aria-hidden="true">{{inputtype?.iconName}}</i></button>
+                <div class="text-bottom">{{inputtype?.displayName | titlecase}}</div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid preview-page" *ngIf="formPreview">
+  <br />
+  <div class="container" *ngIf="!mobileView">
+    <div class="row" style="cursor:pointer;font-weight:bold" *ngIf="!inspectionPreview">
+      <i class="pi pi-chevron-left back-to-template" style="margin-top:5px;"></i>
+      <span class="back-to-template" (click)="formPreview=false;dynamicFieldId=null">Back to template editor</span>
+    </div>
+  </div>
+  <app-section-wizard [formName]="currentInspection?.inspectionName" [preview]="formPreview"
+    (buttonClicked)="formPreview = $event;"></app-section-wizard>
+</div>
+
+<div *ngIf="sectionView">
+  <app-edit-section [sectionList]="inspectionSections" [inspectionHeaderId]="currentInspection?.inspectionHeaderId"
+    [activeSectionId]="currentInspection?.sectionId" (navigationButtonClicked)="onSectionChanged($event)">
+  </app-edit-section>
+</div>
+<p-confirmDialog></p-confirmDialog>
+
+<app-dialog-box *ngIf="detailsSaved" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

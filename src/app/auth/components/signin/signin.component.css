@@ -1,0 +1,90 @@
+.login-card {
+  max-width: 400px;
+  margin-top:6%;
+  padding:2%;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  color: var(--main-bg-color) !important;
+  box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  }
+  .errorInfo{
+  width: 100%;
+  color: darkred !important;
+  font-size: large;
+  font-weight:450;
+  }
+  .login-card input[type=text], .login-card input[type=email],
+  .login-card input[type=password]{
+  padding: 10px;
+  width: 100% !important;
+  margin-top:10px !important;
+  height:45px;
+  border-radius: 0px !important;
+  border: 1px solid black !important;
+  }
+  .login-card input[type=password] {
+  padding-right: 40px !important;
+  }
+  .login-card i {
+  position: absolute;
+  right: 0;
+  padding: 1px 25px 3px 6px;
+  top: 37%;
+  bottom: 0px;
+  color: #000;
+  font-size: 23px !important;
+  transition: .3s;
+  }
+  .login-card input[type=text]:focus,
+  .login-card input[type=email]:focus,
+  .login-card input[type=password]:focus,
+  .login-card input[type=text]:active, 
+  .login-card input[type=email]:active,
+  .login-card input[type=password]:active,
+  .login-card input[type=text]:hover, 
+  .login-card input[type=email]:hover,
+  .login-card input[type=password]:hover  {
+  border: 2px solid !important;
+  border-color: var(--main-bg-color) !important;
+  box-shadow: none;
+  }
+  .button-login{
+  width: 100%;
+  height: 45px;
+  background-color: var(--main-bg-color) !important;
+  border-radius: 0px !important;
+  }
+  input[type=email]:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px white inset !important;
+  }
+  @media (min-width:500px) and (max-width:768px) {
+  .login-card {
+  margin-top: 30% !important;
+  }
+  }
+  
+  @media (max-width: 500px) {
+  .login-card {
+  max-width: 300px;
+  margin-top: 35% !important;
+  padding: none !important;
+  box-shadow: none !important; 
+  }
+  .button-login, .login-card .ui-inputtext {
+  width: 100% !important;
+  height:45px; 
+  } 
+  }
+  .login-card .user-icon {
+  font-size: 70px !important;
+  color:darkgray;
+  }
+  img.center {
+  display: block;
+  margin: 0 auto;
+  }
+  .password-icon {
+  height: 30px !important;
+  color: #636363 !important;
+  }

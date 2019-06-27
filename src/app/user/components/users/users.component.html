@@ -1,0 +1,208 @@
+<div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer': mobileView}">
+  <div class="wrapper" *ngIf="!mobileView">
+    <app-filter *ngIf="showFilter" [table]="userTableRef" (tableFiltered)="getFilteredTable($event)"
+      (filterClosed)="showFilter = event"></app-filter>
+    <div id="content">
+      <div class="container-fluid page-container" *ngIf="(!mobileView && users !== null)">
+        <ng-container *ngIf="users?.length > 0">
+          <div class="row">
+            <div class="col-lg-6 col-md-6 float-left">
+              <h3>Users</h3>
+            </div>
+            <div class="col-lg-6 col-md-6">
+              <button type="button" class="btn float-right" pButton label="Add New User" (click)="addMetric()"
+                [routerLink]="['/app/adduser']"></button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <div class="pagetip">
+                Manage Users, lets you view account information of individuals along with access levels. You can edit
+                and archive accounts
+                or create new users.
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <a class="col-lg-6 col-md-6 cursor-pointer" *ngIf="!sortService.showFilter" (click)="showFilters()">
+              <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+            <div class="col-lg-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search" (input)="filterGlobal($event?.target?.value)"
+                  style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div><br />
+          <div class="row" *ngIf="users?.length > 0">
+            <div class="col-lg-12 col-md-12">
+              <p-table #userListRef [value]="users" [columns]="column" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th class="table-header" *ngFor="let col of columns" [pSortableColumn]="col.field">{{col?.header}}
+                      <p-sortIcon *ngIf="col?.header!== 'Actions'" [field]="col.field" ariaLabel="Activate to sort">
+                      </p-sortIcon>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-user let-index="rowIndex">
+                  <tr>
+                    <td>{{user?.user?.name | titlecase}}</td>
+                    <td>{{user?.email}}</td>
+                    <td>{{user?.userRole?.name}} </td>
+                    <td>
+                      <i class="material-icons icon-font" (click)="openArchiveModal(user)"
+                        pTooltip="Archive this account">
+                        folder_open</i>&nbsp;
+                      <i class="material-icons icon-font" pTooltip="Edit this account"
+                        (click)="openModalEdit(user?.id, edit)">edit</i>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr class="text-center">
+                    <td colspan="4">
+                      <h5>{{messages?.NO_RECORDS_FOUND}}</h5>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </ng-container>
+        <div class="row justify-content-center" *ngIf="users?.length === 0">
+          <h4>{{messages?.USER_IS_EMPTY}}</h4>
+        </div>
+      </div>
+      <div *ngIf="users === null">
+        <i class="pi pi-spin pi-spinner webviewLoader"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Start Mobile view design  -->
+  <div *ngIf="mobileView">
+    <app-top-navbar [headerDetails]="navbarDetails" [selectedValue]="userName" [sortingDetails]="sortingDetails"
+      [headerTab]="headerTab" (tabAction)="tabAction($event)" (leftheaderClicked)="onNavigate('L')"
+      (rightheaderClicked)="onNavigate('R')" (keyValues)="searchValue($event)" (clear)="onClear()"
+      (sorting)="sortReport($event)"></app-top-navbar>
+
+    <div id="report" class="container-fluid mobileview-table-container scroll-content touch-scroll">
+      <table class="table table-hover" *ngIf="!archivedUsersView">
+        <tbody>
+          <ng-container *ngFor="let user of filteredReport; let id=index">
+            <tr (click)="openBottomSheet(id)">
+              <td class="cursor-pointer">
+                <div class="titleText" innerHtml="{{user?.user?.name | titlecase}}" *ngIf="!userName">
+                </div>
+                <div class="titleText" innerHtml="{{user?.user?.name | highlight: userName}}" *ngIf="userName">
+                </div>
+                <div class="siteText">
+                  {{user?.email}}
+                </div>
+                <div class="listText">
+                  {{user?.userRole?.name}}
+                </div>
+              </td>
+              <app-bottom-sheet *ngIf="bottomSheetIndex === id" [bottomModalDetails]="bottomSheetDetails"
+                (bottomSheetClosed)="closeBottomSheet($event)"
+                (bottomSheetEventEmitter)="bottomSheetMenuAction($event, user)">
+              </app-bottom-sheet>
+            </tr>
+            <p></p>
+          </ng-container>
+        </tbody>
+      </table>
+
+      <!-- archived users view -->
+      <table class="table table-hover" *ngIf="archivedUsersView">
+        <tbody>
+          <ng-container *ngFor="let user of filteredReport; let id=index">
+            <tr>
+              <td class="cursor-pointer">
+                <div class="row" style="padding-left: 15px !important">
+                  <div class="col-10 titleText" innerHtml="{{user?.user?.name | titlecase}}" *ngIf="!userName">
+                  </div>
+                  <div class="col-10 titleText" innerHtml="{{user?.user?.name | highlight: userName}}" *ngIf="userName">
+                  </div>
+                  <div class="col-2" style="background-color: #f5f5f5;padding-right:30px !important;">
+                    <i class="material-icons icon-font float-right" (click)="openRestoreModal(user)">
+                      replay
+                    </i>
+                  </div>
+                </div>
+                <div class="siteText">
+                  {{user?.email}}
+                </div>
+                <div class="listText">
+                  {{user?.userRole?.name}}
+                </div>
+              </td>
+            </tr>
+            <p></p>
+          </ng-container>
+        </tbody>
+      </table>
+      <div *ngIf="filteredReport === null">
+        <i class="pi pi-spin pi-spinner mobileLoader"></i>
+      </div>
+      <div *ngIf="filteredReport?.length === 0 && !resultNotExist && !archivedUsersView">
+        <h4 class="align-center">{{messages?.USER_IS_EMPTY}}</h4>
+      </div>
+      <div *ngIf="filteredReport?.length === 0 && !resultNotExist && archivedUsersView">
+        <h4 class="align-center">{{messages?.ARCHIVED_LIST_IS_EMPTY}}</h4>
+      </div>
+      <div *ngIf="resultNotExist">
+        <h5 class="align-center">{{messages?.NO_RECORDS_FOUND}}</h5>
+      </div>
+    </div>
+  </div>
+  <!-- End Mobile view design  -->
+
+  <!-- when user clicks edit  -->
+  <ng-template #edit let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h4 class="modal-title">Edit User Profile</h4>
+      <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="editForm">
+        <div class="row">
+          <div class="col-12">
+            <label for="email">Email:</label>
+          </div>
+          <div class="form-group col-12">
+            <input class="form-control" type="text" [readOnly]="true" pInputText formControlName="email" appInput>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <label for="firstName">First Name:</label>
+          </div>
+          <div class="form-group col-12">
+            <input type="text" class="form-control" pInputText formControlName="firstName" appInput>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <label for="lastName">Last Name:</label>
+          </div>
+          <div class="form-group col-12">
+            <input type="text" class="form-control" pInputText formControlName="lastName" appInput>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="mobile-view-button" pButton label="Update" class="mobile-view-button"
+        [disabled]="!editForm?.dirty || !editForm?.valid" (click)="onEditAccount()"></button>
+      <button type="button" pButton label="Cancel" class="mobile-view-button" (click)="d('Cross click')"></button>
+    </div>
+  </ng-template>
+</div>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxEventEmitter)="dialogBoxAction($event)"
+  (dialogBoxClosed)="dialogBoxClose($event)"></app-dialog-box>
+<p-confirmDialog></p-confirmDialog>

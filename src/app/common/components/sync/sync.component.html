@@ -1,0 +1,15 @@
+<ng-template #sync let-c="close" let-d="dismiss">
+  <div class="bottom-sheet-dialog">
+    <div class="modal-body bottom-sheet-body">
+      <div class="row bottom-sheet-text" *ngIf="!isCompleted">
+        <p class="synchronize col-12">Synchronizing<span>.</span><span>.</span><span>.</span></p>
+        <div class="progress">
+          <div class="progress-bar progress-bar-success" role="progressbar" [attr.aria-valuenow]="progress"
+            aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;" [style.width]="(progress/100)*100 + '%'">
+            {{progress}}%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

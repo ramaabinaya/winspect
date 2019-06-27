@@ -1,0 +1,16 @@
+<div class="container shadow">
+  <div class="row">
+    <div class="col-12">
+      <section class="signature-component">
+        <signature-pad [options]="signaturePadOptions" #sp (onBeginEvent)="drawStart()" (onEndEvent)="drawComplete()">
+        </signature-pad>
+      </section>
+    </div>
+  </div>
+  <p></p>
+  <div class="row">
+    <div class="col-12">
+      <button class="btn btn-default float-left" (click)="sp.clear()">CLEAR</button>
+    </div>
+  </div>
+</div>

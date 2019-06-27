@@ -1,0 +1,71 @@
+<nav class="navbar navbar-expand-md navbar-dark" *ngIf="!mobileView">
+  <div class="collapse navbar-collapse">
+    <a class="navbar-brand" [routerLink]="['/app/home']"><img src="./assets/images/Navbar_windspect_logo.png"
+        class="responsive center" /></a>
+    <ul class="navbar-nav" *ngIf="menus?.length > 0">
+      <ng-container *ngFor="let mainMenu of menus">
+        <ng-container *ngIf="mainMenu?.routerLink && mainMenu?.isMenu">
+          <li class="nav-item" [ngClass]="{'appDropdown': mainMenu.subMenu,'dropdown':mainMenu.subMenu}">
+            <a class="nav-link" routerLink="{{mainMenu?.routerLink}}">{{mainMenu?.name}}</a>
+          </li>
+        </ng-container>
+        <li class="nav-item dropdown" *ngIf="mainMenu?.isMenu && mainMenu?.subMenu && mainMenu?.subMenu?.length > 0"
+          appDropdown>
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown">{{mainMenu?.name}}
+            <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item" *ngFor="let menu of mainMenu?.subMenu" routerLink="{{menu?.routerLink}}">
+              {{menu?.name}}</li>
+          </ul>
+        </li>
+      </ng-container>
+    </ul>
+    <ul class="navbar-nav ml-auto align-right" *ngIf="!profileIcon?.subName && profileIcon?.iconName">
+      <li class="nav-item">
+        <p class="font-color"> Welcome {{user?.firstName | titlecase}} {{user?.lastName | titlecase}}</p>
+      </li>
+      <li class="nav-item "> <i class="material-icons user-icon" routerLink="{{profileIcon?.routerLink}}">
+          {{profileIcon.iconName}}
+        </i>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div *ngIf="isSynchronize">
+  <app-sync></app-sync>
+</div>
+<nav class="navbar fixed-bottom navbar-expand bg-light" *ngIf="mobileView && !hideNav">
+  <!-- <ng-container *ngIf="menus?.length > 0">
+    <ng-container *ngFor="let mainMenu of menus">
+      <ng-container *ngFor="let menu of mainMenu?.subMenu">
+        <ng-container *ngIf="menu?.routerLink && menu?.subName && menu?.iconName">
+          <div
+            [ngClass]="{'col-2': user?.role === 'Admin', 'admin-nav': user?.role === 'Admin','col-4': user?.role === 'Technician', 'tech-nav': user?.role === 'Admin'}">
+            <a class="nav-link bottom-nav" *ngIf="menu?.isMenu"
+              [ngClass]="{'activeNav': currentActiveMenu === menu.subName}" routerLink="{{menu?.routerLink}}">
+              <svg class="bottom-nav-icon">
+                <use [attr.xlink:href]="menu?.iconName"></use>
+              </svg>{{menu?.subName}}
+            </a>
+          </div>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </ng-container> -->
+
+  <ng-container *ngIf="navItems?.length > 0">
+    <ng-container *ngFor="let menu of navItems">
+      <ng-container *ngIf="menu?.routerLink && menu?.subName && menu?.iconName">
+        <div
+          [ngClass]="{'col-2': user?.role === 'Admin', 'admin-nav': user?.role === 'Admin','col-4': user?.role === 'Technician', 'tech-nav': user?.role === 'Admin'}">
+          <a class="nav-link bottom-nav" *ngIf="menu?.isMenu"
+            [ngClass]="{'activeNav': currentActiveMenu === menu.subName}" routerLink="{{menu?.routerLink}}">
+            <svg class="bottom-nav-icon">
+              <use [attr.xlink:href]="menu?.iconName"></use>
+            </svg>{{menu?.subName}}
+          </a>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</nav>

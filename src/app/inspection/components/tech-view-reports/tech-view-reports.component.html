@@ -1,0 +1,181 @@
+<div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer':mobileView}">
+  <div class="wrapper" *ngIf="!mobileView">
+    <app-filter *ngIf="showFilter" [table]="reportTableRef" (tableFiltered)="getFilteredTable($event)"
+      (filterClosed)="showFilter = event"></app-filter>
+
+    <div id="content">
+      <div class="container-fluid page-container" *ngIf="!mobileView && reportExist">
+        <ng-container *ngIf="assignInspectionUsers?.length > 0">
+          <div class="row">
+            <div class="col-md-6 page-header">
+              <h3>Reports</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="pagetip">
+                View Reports lets you view a list of inspections. You can view the report by clicking on them and
+                create
+                the pdf by clicking
+                pdf in the export button and can also share that created pdf through the mail.
+              </div>
+            </div>
+          </div>
+          <br />
+
+          <div class="row">
+            <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="showFilter = !showFilter">
+              <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search" (input)="filterGlobal($event?.target?.value)"
+                  style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div><br />
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <p-table #reportTableRef [columns]="cols" [value]="assignInspectionUsers" [paginator]="true" [rows]="10">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="table-header" [pSortableColumn]="'report.id'">Report ID
+                      <p-sortIcon [field]="'report.id'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'report.windturbineId'">TurbineId
+                      <p-sortIcon [field]="'report.windturbineId'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'id'">Report Name
+                      <p-sortIcon [field]="'id'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'report.modified'">Date Submitted
+                      <p-sortIcon [field]="'report.modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'inspectionStatus.name'">Status
+                      <p-sortIcon [field]="'inspectionStatus.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-reports let-i="rowIndex">
+                  <tr class="table-cell"
+                    *ngIf="reports?.inspectionStatus?.name !== 'Assigned' && reports?.report?.active === 1"
+                    (click)="selectedReport(reports?.report?.id)">
+                    <td>{{reports?.report?.id}}</td>
+                    <td>{{reports?.report?.windturbineId}}</td>
+                    <td>{{reports?.report?.name | titlecase}}</td>
+                    <td *ngIf="reports?.report?.modified && !disconnected">{{reports?.report?.modified |date:
+                      'MM/dd/yy'
+                      }}</td>
+                    <td *ngIf="reports?.report?.modified && disconnected">{{reports.report?.modified}}</td>
+                    <td>{{reports?.inspectionStatus?.name | titlecase}}</td>
+                    <td class="mobileView" *ngIf="reports?.inspectionStatus?.name =='Completed'"><i
+                        class="pi pi-check-circle icon-font"></i></td>
+                    <td class="mobileView" *ngIf=" reports?.inspectionStatus?.name =='In progress'"><i
+                        class="pi pi-spinner icon-font"></i></td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr class="text-center">
+                    <td colspan="5">
+                      <h5>{{messages ?.NO_RECORDS_FOUND}}</h5>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </ng-container>
+        <div class="row justify-content-center" *ngIf="assignInspectionUsers?.length === 0">
+          <h4>{{messages?.REPORT_IS_EMPTY}}</h4>
+        </div>
+      </div>
+      <div *ngIf="!reportExist">
+        <i class="pi pi-spin pi-spinner webviewLoader"></i>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="mobileView">
+    <app-top-navbar [headerDetails]="navbarDetails" [sortingDetails]="sortingDetails" [headerTab]="headerTab"
+      (tabAction)="tabAction($event)" (leftheaderClicked)="onNavigate()" (rightheaderClicked)="createsqlitedb()"
+      (keyValues)="searchValue($event)" (clear)="onClear()" (sorting)="sortReport($event)"></app-top-navbar>
+    <div id="report" class="container-fluid mobileview-table-container scroll-content touch-scroll">
+      <table class="table table-hover" *ngIf="reportExist && !archivedReportView">
+        <tbody>
+          <ng-container *ngFor="let reports of filteredReport; let id=index">
+            <tr (click)="openBottomSheet(id, reports)">
+              <td class="cursor-pointer">
+                <div class="titleText">
+                  {{reports?.report?.modified |date: 'MM/dd/yy' }}
+                </div>
+                <div class="inspectionText">
+                  {{reports?.report?.name | titlecase}}
+                </div>
+                <div class="siteText" innerHtml="{{ reports?.windfarm?.name | titlecase}}" *ngIf="!selectedValue">
+                </div>
+                <div class="siteText" innerHtml="{{ reports?.windfarm?.name | highlight: selectedValue }}"
+                  *ngIf="selectedValue">
+                </div>
+                <div class="completed" *ngIf="reports?.inspectionStatus?.name === 'Completed'">
+                  {{reports?.inspectionStatus?.name }}
+                </div>
+                <div class="inProgress" *ngIf="reports?.inspectionStatus?.name === 'In progress'">
+                  {{reports?.inspectionStatus?.name }}
+                </div>
+              </td>
+              <app-bottom-sheet *ngIf="bottomSheetIndex === id" [bottomModalDetails]="bottomSheetDetails"
+                (bottomSheetClosed)="closeBottomSheet($event)"
+                (bottomSheetEventEmitter)="bottomSheetMenuAction($event, id, reports)">
+              </app-bottom-sheet>
+            </tr>
+            <p></p>
+          </ng-container>
+        </tbody>
+      </table>
+
+      <table class="table table-hover" *ngIf="reportExist && archivedReportView">
+        <tbody>
+          <ng-container *ngFor="let reports of filteredReport; let id=index">
+            <tr *ngIf="reports?.report?.active === 0">
+              <td class="cursor-pointer">
+                <div class="titleText">
+                  {{reports?.report?.modified|date:'MM/dd/yy'}}
+                  <p class="alignright">
+                    <i class="material-icons icon-font" (click)="openConfirmationDialog(reports?.report?.id)">
+                      replay
+                    </i>
+                  </p>
+                </div>
+                <div class="inspectionText">
+                  {{reports?.report?.name | titlecase}}
+                </div>
+                <div class="siteText">
+                  {{reports?.inspectionHeader?.name | titlecase}}
+                </div>
+                <div class="listText" innerHtml="{{ reports?.windfarm?.name | titlecase}}" *ngIf="!selectedValue">
+                </div>
+                <div class="listText" innerHtml="{{ reports?.windfarm?.name | highlight: selectedValue }}"
+                  *ngIf="selectedValue">
+                </div>
+              </td>
+            </tr>
+            <p></p>
+          </ng-container>
+        </tbody>
+      </table>
+      <div *ngIf="filteredReport === null">
+        <i class="pi pi-spin pi-spinner mobileLoader"></i>
+      </div>
+      <div *ngIf="filteredReport?.length === 0 && !resultNotExist">
+        <h4 class="align-center">{{messages ?.REPORT_IS_EMPTY}}</h4>
+      </div>
+      <div *ngIf="resultNotExist">
+        <h5 class="align-center">{{messages ?.NO_RECORDS_FOUND}}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxEventEmitter)="dialogBoxAction($event)"
+  (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

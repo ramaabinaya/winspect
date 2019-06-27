@@ -1,0 +1,17 @@
+<ng-template #dialogbox let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">{{dialogBoxDetails?.header}}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="onDialogBoxEvent()" (click)="d('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>{{dialogBoxDetails?.content}}</p>
+  </div>
+  <div class="modal-footer" *ngIf="dialogBoxDetails?.action?.length > 0">
+    <div class="btn-group" *ngFor="let action of dialogBoxDetails?.action">
+      <button type="button" class="mobile-view-button" (click)="onDialogBoxEvent(action?.value)"
+        (click)="d('Cross click')">{{action?.label}}</button>
+    </div>
+  </div>
+</ng-template>

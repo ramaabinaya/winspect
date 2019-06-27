@@ -1,0 +1,20 @@
+.filter-container .ui-dropdown.ui-widget.ui-state-default.ui-helper-clearfix {
+  width: 210px !important;
+}
+.ui-dropdown.label.ui-dropdown-label {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+.ui-dropdown label.ui-dropdown-label {
+  text-overflow: ellipsis !important;
+}
+.container-fluid.filter-container {
+  margin-top: 21px !important;
+  border-top: 2px solid var(--main-bg-color);
+  background-color: #fff;
+  padding: 15px;
+  margin-left: 3%;
+}
+.container-fluid.filter-container.ui-accordion .ui-accordion-header a {
+  background-color: #fff;
+}

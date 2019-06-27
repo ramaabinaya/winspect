@@ -1,0 +1,22 @@
+.custom-form-control-container .row{
+  margin-top: 10px;
+}
+.custom-form-control-container .col-md-4.menu-view{
+  margin: 0px 60px;
+  border: 1px solid gainsboro;
+  border-radius: 1em; 
+}
+.custom-form-control-container .col-md-12.menu-item{
+  text-align: left;
+  padding: 8px 10px;
+}
+.custom-form-control-container .col-md-12.menu-item:not(:last-child) { 
+  border-bottom: 1px solid gainsboro; 
+}
+.p-card-view{
+  width: 100%;
+  height:100%;
+}
+.custom-form-control-container .material-icons.add-icon{
+  padding-top: 10px;
+}

@@ -1,0 +1,54 @@
+<div class="card card-template createtemplate-container">
+  <div class="card-header cursor-pointer" appCollapsed>
+    <div class="row card-link collapsed">
+      <a class="col-md-12" aria-expanded="true" data-toggle="collapse">
+        Template Information
+      </a>
+    </div>
+  </div>
+  <div class="container collapse show">
+    <div class="col-12">
+      <form [formGroup]="templateInfoForm">
+        <div class="row row-space">
+          <div class="col-12">
+            <input type="text" placeholder="Enter a Template Name" pInputText formControlName="name"
+              class="form-control template-form-input" />
+            <span class="error-message" *ngIf="templateInfoForm['controls']?.name?.touched &&
+            templateInfoForm?.get('name')?.hasError('required')">{{messages?.FIELD_REQUIRED }}</span>
+            <span class="error-message"
+              *ngIf="templateInfoForm['controls']?.name?.touched &&
+              templateInfoForm?.get('name')?.hasError('templateNameAlreadyExists')">{{messages?.TEMP_ALREADY_EXIST}}</span>
+          </div>
+        </div><br />
+        <div class="row row-space">
+          <div class="col-12">
+            <textarea type="text" placeholder="Enter a Template Description" pInputText formControlName="description"
+              class="form-control template-form-input"></textarea>
+            <span class="error-message" *ngIf="templateInfoForm['controls']?.description?.touched &&
+              templateInfoForm?.get('description')?.hasError('required')">{{messages?.FIELD_REQUIRED }}</span>
+          </div>
+        </div><br />
+        <div class="row row-space">
+          <div class="col-12">
+            <p-dropdown placeholder="Select a Template type" styleClass="template-form-input" [style]="{'width':'100%'}"
+              formControlName="type" [options]="templateTypes"></p-dropdown>
+            <span class="error-message" *ngIf="templateInfoForm['controls']?.type?.touched &&
+              templateInfoForm?.get('type')?.hasError('required')">{{messages?.FIELD_REQUIRED }}</span>
+          </div>
+        </div><br />
+        <div class="row row-space">
+          <div class="col-12" style="text-align:center">
+            <button type="button" pButton class="btn"
+              *ngIf="inspectionHeaderId === null || inspectionHeaderId === undefined"
+              [disabled]="!templateInfoForm?.valid" label="Create Template" (click)="onCreateTemplate()"></button>
+            <button type="button" pButton class="btn"
+              *ngIf="(inspectionHeaderId!== null && inspectionHeaderId >= 0 && templateInfoForm?.dirty)"
+              [disabled]="!templateInfoForm?.valid" label="Edit Template" (click)="onEditTemplate(edit)"></button>
+          </div>
+        </div><br />
+      </form>
+    </div>
+  </div>
+</div>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

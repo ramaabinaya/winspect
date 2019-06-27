@@ -1,0 +1,44 @@
+
+ /* .canvas_whiteboard_button-draw {
+  color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+.drawButtonClass {
+  padding:20px;
+}
+.sketch-container {
+  height:400;
+}
+.canvas_whiteboard_button-draw:before {
+  content: "Draw";
+  margin-right: 20px;
+  left: 0%;
+} */
+/* .canvas_whiteboard_buttons[_ngcontent-c5]
+@media (min-width: 401px) {
+  canvas-whiteboard .canvas_whiteboard_buttons {
+    /* padding: 0px !important; */
+    /* left:0%;
+    right: auto !important;
+  } */
+/* } */ 
+
+/* @media (min-width: 401px)
+<style>…</style>
+.canvas_whiteboard_buttons[_ngcontent-c13] { */
+/* .canvas_whiteboard {
+  height: 200px;
+  margin-top: 50px;
+  position: relative;
+} */
+.canvas_whiteboard {
+  position: absolute !important;
+  z-index: 1 !important;
+  width: 100% !important;
+}
+canvas {
+  position: absolute !important;
+  z-index: 1 !important;
+  width: 100% !important;
+}

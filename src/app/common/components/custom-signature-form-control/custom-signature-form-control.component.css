@@ -1,0 +1,33 @@
+.signature-component {
+  background-color: #fff;
+  border: 1px solid lightgray;
+  display: inline-block;
+  max-width: 100%;
+}
+  canvas {
+    display: block;
+    position: relative;
+    border: 1px solid;    
+  }
+  img {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .shadow {
+    -moz-box-shadow:    inset 0 0 20px #000000;
+    -webkit-box-shadow: inset 0 0 20px #000000;
+    box-shadow:         inset 0 0 20px #000000;
+ }
+ .container.shadow {
+  background-color: #fff;
+  padding: 10px;
+  width: 565px;
+ }
+ @media (max-width: 768px) {
+  .container.shadow {
+    background-color: #fff;
+    padding: 10px;
+    width: auto;
+   }
+ }

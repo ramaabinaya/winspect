@@ -1,0 +1,91 @@
+<div class="wrapper webViewContainer" *ngIf="!mobileView">
+  <app-filter *ngIf="showFilter" [table]="assignInspectionUsersRef" (tableFiltered)="getFilteredTable($event)"
+    (filterClosed)="showFilter = event"></app-filter>
+
+  <div id="content">
+    <div class="container-fluid page-container" *ngIf="responseReceived">
+      <ng-container *ngIf="assignInspectionUsers?.length > 0">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <h3>Current Reports</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <div class="pagetip">
+              Current Reports lets you view a list of completed reports for inspections. You can view the report by
+              clicking on them and
+              create the pdf by clicking pdf in the export button and can also share that created pdf through the mail.
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="row">
+          <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="showFilter = !showFilter">
+            <i class=" pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+          <div class="col-lg-6 col-md-6 float-right">
+            <div class="global-search">
+              <input type="text" pInputText placeholder="Global Search" (input)="filterGlobal($event?.target?.value)"
+                style="width:100%">
+              <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="justify-content-center">
+          <p-table #assignInspectionUsersRef [columns]="cols" [value]="assignInspectionUsers" [paginator]="true"
+            [rows]="10" class="ui-table" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="table-header" [pSortableColumn]="'report.id'">Report Id
+                  <p-sortIcon [field]="'report.id'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'inspectionHeader.name'">Inspection Name
+                  <p-sortIcon [field]="'inspectionHeader.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" *ngIf="user?.role !=='Technician'" [pSortableColumn]="'user.name'">
+                  Technician
+                  Name
+                  <p-sortIcon [field]="'user.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'windfarm.name'">Client Name
+                  <p-sortIcon [field]="'windfarm.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'report.modified'">Date
+                  <p-sortIcon [field]="'report.modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header">Status</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-reports>
+              <tr class="table-cell cursor-pointer" (click)="onReportRowSelected(reports?.report?.id)">
+                <td>{{reports?.report?.id}}</td>
+                <td>{{reports?.inspectionHeader?.name | titlecase}}</td>
+                <td *ngIf="user?.role !=='Technician'">{{reports?.user?.name | titlecase}}</td>
+                <td>{{reports?.windfarm?.name | titlecase}}</td>
+                <td>{{reports?.report?.modified | date:'MM/dd/yy'}} </td>
+                <td>{{reports?.inspectionStatus?.name}}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr class="text-center">
+                <td colspan="6" *ngIf="user?.role !== 'Technician'">
+                  <h5>{{(messages | async)?.NO_RECORDS_FOUND}}</h5>
+                </td>
+                <td colspan="5" *ngIf="user?.role =='Technician'">
+                  <h5>{{(messages | async)?.NO_RECORDS_FOUND}}</h5>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="assignInspectionUsers?.length === 0">
+        <h4 class="row justify-content-center">{{(messages | async)?.REPORT_IS_EMPTY}}</h4>
+      </ng-container>
+    </div>
+    <div *ngIf="!responseReceived"> {{responseReceived}}
+      <i class="pi pi-spin pi-spinner webviewLoader"></i>
+    </div>
+  </div>
+</div>

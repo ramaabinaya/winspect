@@ -1,0 +1,92 @@
+.card{
+  margin-bottom: 20px;
+}
+.card-header{
+  background-color: #fafafa;
+  cursor: pointer;
+}
+.tech-reports-container {
+  position:  relative !important;
+  padding-bottom: 20px !important;
+}
+.question-row{
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.67;
+    color: #a9a9a9;
+}
+.card-link a{  
+  color: #434343;
+  text-decoration: none;
+}
+.card-link a:before{
+  content:' ';
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 9px;
+  height: 9px;
+  transform: rotate(135deg);
+  font-size: 20px;
+  border-bottom: solid 2px #a9a9a9;
+  border-left: solid 2px #a9a9a9;
+}
+.reportLoader {
+  margin-left:auto;
+  margin-right: auto;
+  color: #636363 !important; 
+}
+.card-link.collapsed a:before{
+  transform: rotate(-45deg);
+  font-size:20px;
+}
+.thumbnail-image{
+  width: 80px;
+  height: 80px;
+  margin: 10px;
+}
+.field-card.card{
+  margin: 0px -20px 0px -20px;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0,.125);
+}
+.card-body .field-card.card:first-child{
+  margin:-20px -20px 0px -20px;
+  border-top:1px solid rgba(0,0,0,.125);
+}
+@media screen and (max-width: 768px) {
+  .container.tech-reports-container{
+    margin-top: -55px;
+    margin-bottom: 70px;    
+  }
+}
+.top-align{
+  padding-top: 2px !important;
+}
+
+@media (min-width: 769px) {
+  .bold-text {
+    margin-top: 18%;
+    font-weight: 5;
+  }
+}
+.pdfLoader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100% !important;
+  background-color: #000;
+  filter: alpha(opacity=50);
+  -moz-opacity: 0.5;
+  -khtml-opacity: 0.5;
+  opacity: 0.5;
+  z-index: 900;
+}
+.pageLoader{
+  font-size: 30px;
+  color: white !important;
+  position: fixed;
+  top: 50%;
+  left: 48%;
+}

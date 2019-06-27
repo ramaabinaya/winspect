@@ -1,0 +1,71 @@
+.bulkassign-container {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height:350px;
+  margin-top: 5px;
+}
+.bulkassign-container::-webkit-scrollbar {
+  width: 5px;
+  padding-right: 10px;
+}
+.bulkassign-container::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+.bulkassign-container::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+.bulk-assign-btn {
+  width: 60%;
+  border-radius: 20px;
+  padding: 5px 0px 5px 0px !important;
+  vertical-align: middle !important;
+  font-size: 14px;
+}
+.assigned-btn {
+  background-color: #fff !important;
+  color: var(--main-bg-color) !important;
+}
+.bulkAssignBody {
+  padding: 1rem 0 1rem 1rem !important;
+}
+.add-fab {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  color: #fff;
+  text-align: center;
+  background:var(--main-bg-color) !important;
+  position: fixed;
+  bottom: 90px;
+  right: 30px;
+  box-shadow: -2px 0px 9px 0px rgba(0,0,0,0.5);
+  animation: addFab;
+  animation-duration: 0.5s; 
+  }
+  .plus-alignment{
+    font-size: 40px;
+    margin-top:4px; 
+    }
+  @keyframes addFab {
+    from {
+        transform: translate3d(0,200px,0);
+    }
+    to {
+        transform: translate3d(0,0,0);
+        opacity: 1
+    }
+  }
+  @media (max-width: 768px){ 
+    .add-fab {
+      bottom: 96px;
+    }
+  }
+  @media (max-width: 380px) and (min-height: 812px){  
+    .add-fab {
+      bottom: 100px;
+    }
+  }
+.readonly {
+  background-color: white;
+}

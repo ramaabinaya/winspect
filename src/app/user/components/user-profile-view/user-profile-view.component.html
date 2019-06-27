@@ -1,0 +1,50 @@
+<div class="container-fluid profile-view-container">
+  <div class="row justify-content-center">
+    <p-card styleClass="profile-view-card">
+      <div class="card-text-view">
+        <p-header>
+          <div class="row justify-content-center profile-header">
+            <h4>User Profile</h4>
+          </div>
+        </p-header>
+        <div class="row justify-content-center">
+          <div class="col-md-2">
+            <i class="material-icons icon-font profile-icon">person</i>
+          </div>
+          <div class="col-md-6">
+            {{user?.firstName | titlecase}} {{user?.lastName | titlecase}}
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-2">
+            <i class="material-icons icon-font profile-icon">email</i>
+          </div>
+          <div class="col-md-6">
+            {{user?.email}}
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-2">
+            <i class="material-icons icon-font profile-icon">assignment_ind</i>
+          </div>
+          <div class="col-md-6">
+            {{user?.role}}
+          </div>
+        </div>
+        <br />
+        <p-footer>
+          <div class="row align-center">
+            <div class="col-12">
+              <button type="button" class="btn btn-primary" (click)="logout()"><i
+                  class="material-icons align-middle">power_settings_new
+                </i>&nbsp;Logout</button>&nbsp;
+              <button type="button" class="btn btn-primary" [routerLink]="['/app/changepassword']"><i
+                  class="material-icons align-middle">cached
+                </i>&nbsp;Change Password</button>
+            </div>
+          </div>
+        </p-footer>
+      </div>
+    </p-card>
+  </div>
+</div>

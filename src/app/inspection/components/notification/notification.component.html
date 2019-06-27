@@ -1,0 +1,50 @@
+<div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer': mobileView}">
+  <div class="container-fluid">
+    <app-top-navbar [headerDetails]="navbarDetails" (leftheaderClicked)="onNavigate('L')"
+      (rightheaderClicked)="onNavigate('R')"></app-top-navbar>
+    <div class="container notification-container">
+      <div class="row">
+        <div class="profileIcon">
+          {{firstLetter}}{{lastLetter}}
+        </div>
+        <div class="profilename">
+          <h5>{{user?.firstName | titlecase}}{{user?.lastName | titlecase}}</h5>
+          <h6>{{user?.email}}</h6>
+        </div>
+      </div>
+      <div class="row profile-settings-container">
+        <table class="table table-hover">
+          <tbody>
+            <tr>
+              <td>
+                <div class="mt">Settings
+                  <svg class="float-right" width="24px" height="24px">
+                    <use xlink:href="assets/symbol-defs.svg#icon-settings"></use>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+            <tr [routerLink]="['/app/changepassword']" *ngIf="!disconnected">
+              <td>
+                <div class="mt">Change Password
+                  <svg class="float-right" width="24px" height="24px">
+                    <use xlink:href="assets/symbol-defs.svg#icon-lock"></use>
+                  </svg>
+                </div>
+              </td>
+            </tr>
+            <tr [routerLink]="['/signin']">
+              <td>
+                <div class="logout">Logout
+                  <i class="material-icons float-right">
+                    power_settings_new
+                  </i>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

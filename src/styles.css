@@ -1,0 +1,875 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'apptheme.css';
+.webViewContainer .btn,.btn {
+  background-color: var(--main-bg-color) !important;
+  border: 1px solid;
+  border-color: var(--main-bg-color) !important;
+  color: white !important;
+  cursor: pointer;
+} 
+.mobileViewContainer .btn,.mobile-view-button {
+  background-color: var(--main-bg-color);
+  border: 1px solid;
+  border-color: var(--main-bg-color) !important;
+  color: white;
+  border-radius: 2px;
+  cursor: pointer;
+} 
+.btn.focus, .btn:focus {
+  box-shadow:none !important;
+}
+.ui-confirmdialog button {
+  background-color: var(--main-bg-color) !important;
+  color: white;
+  cursor: pointer;
+}
+input[type=text], input[type=password],
+ input[type=email], textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+ }
+/* Start Top Nav-bar design */
+.mobileViewContainer .grad{
+  /* background: var(--main-bg-color); */
+  text-align: center;
+  vertical-align:fit-content;
+  color:white; 
+  font-family:Helvetica;
+  font-style:Title Regular;
+  font-size: 18px;
+  vertical-align: middle;
+  z-index: 1000 !important;
+  height: auto !important;
+}
+/* End Top Nav-bar design */
+
+/* Start Error message style */
+.ui-message {
+  border: 0px !important;
+  padding: 0px !important;
+}
+/* End Error message style */
+
+.ui-inputgroup-addon:last-child {
+  border-radius: 0px !important;
+}
+
+/* Dynamic form design */
+.page-header{
+  font-size: 18px;
+  font-weight: 500;
+  float: left;
+}
+
+/* Pagetip */
+.pagetip{
+  color: #626060;
+  font-size: 16px;
+  background-color:#ffffff;
+  margin-top: 3px;
+  border: 0px !important;
+  padding: 10px 0px 10px 0px !important;
+}
+/* End Pagetip */
+
+/* Start Confirmation DialogBox Design */
+.ui-dialog-titlebar.ui-widget-header {
+  background-color: whitesmoke !important;
+  padding: 1em !important;
+}
+.ui-dialog.ui-widget .ui-dialog-content {
+  padding: 1em !important;
+}
+/* End Confirmation DialogBox Design */
+
+/* Webview Table Design */
+.ui-table .ui-table-tbody > tr > td{
+  border-right: 0px solid #fff !important;
+  border-left: 0px;
+  border-right: 0px;
+  padding: 0.7em;
+  background-color: white;
+}
+.table-header{
+  background-color: whitesmoke !important;
+  text-align: left !important;
+  color: rgba(0,0,0,.87) !important;
+  padding: 15px 15px !important;
+  font-weight: 520;
+  font-family: Helvetica;
+}
+.table-cell{
+  color: #000 !important;
+  text-align: left !important;
+  cursor: pointer;
+  padding-left: 15px !important;
+  font-size: 14px;
+  font-family: Helvetica;
+}
+.ui-table .ui-table-tbody > tr > td {
+  border-top: 1px solid #e6e6e6 !important;
+  border-left: 0px solid #e6e6e6 !important;
+  border-right: 0px solid #e6e6e6 !important;
+  padding: 15px !important;
+}
+.ui-table .ui-table-tbody > tr > td {
+  border: 0px;
+}
+.ui-table .ui-table-thead > tr > th, .ui-table .ui-table-tfoot > tr > td{
+  border: 0px !important; 
+}
+th.table-header.ui-sortable-column.ui-state-highlight{
+  background-color: whitesmoke !important;
+  color: #636363 !important;
+}
+.pi.pi-fw.pi-sort, .pi.pi-fw.pi-sort {
+  display: none !important;
+}
+i.ui-sortable-column-icon.pi-sort-up::before, i.ui-sortable-column-icon.pi-sort-down::before {
+  color: #636363 !important;
+}
+.ui-table .ui-paginator-bottom{
+  border-top: 1px solid #e6e6e6 !important;
+  border: 0px;
+}
+.ui-paginator-bottom.ui-paginator.ui-widget.ui-widget-header{
+  background-color: #fff !important;
+  background: #fff !important;
+}
+.ui-table table{
+  box-shadow: 1px 10px 5px grey;
+}
+.container-fluid.page-container, .container.page-container { 
+  background-color:white;
+  padding: 3% 3%;
+  border-top: 2px solid var(--main-bg-color);
+  -webkit-box-shadow: 0 8px 6px -6px lightgray;
+  -moz-box-shadow: 0 8px 6px -6px lightgray;
+  box-shadow: 0 8px 6px -6px lightgray;
+}
+/*End Webview Table design*/
+
+/* Paginator design */
+.ui-paginator a {
+  color: #555555;
+  border-radius: 50%;
+  border: 0px;
+  box-shadow: none;
+}
+/* Start MobileView Table Design */
+
+.mobileview-table-container {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.mobileview-table-container table td { 
+  padding: 0rem !important;
+  vertical-align: top;
+  background-color: #ffffff;
+  border-top: 0px !important;
+}
+/* End MobileView Table Design */
+
+.ui-calendar.ui-calendar-w-btn{
+  width: calc(100% - 2em);
+  border-radius: 0px !important;
+  }
+.icon-font{
+ font-size: 24px;
+ color: #636363 !important;
+ cursor: pointer;
+ height: 100%;
+}
+/* Start Mobile View Modal Design */
+.modal-header{
+  background-color: #f6f7f9 !important;
+  color: #000 !important;
+  font-size:17px;
+  font-family:Helvetica;
+}
+.modal-title {
+  font-size: 1.1rem !important;
+}
+/* End Mobile View Modal Design */
+
+/* Start Mobile View Search Box */
+.mobileViewContainer input[type=text]{
+  width:100%;
+  border-radius:5px;
+  outline:none;
+  transition:.3s;
+}
+.mobileViewContainer .text-muted .inputWithIcon input[type=text] {
+  padding-left: 43px;
+  box-shadow: none;
+  height: 45px;
+  border:1px solid #ffffff;
+  background-color: #ffffff;
+}
+.mobileViewContainer .text-muted .inputWithIcon svg{
+  position: absolute;
+  left: 0;
+  top:12%;
+  bottom: 0px;
+  fill: #aaa;
+  transition: .3s;
+}
+.mobileViewContainer .inputWithIcon{
+  position:relative;
+  width:100%
+}
+.mobileViewContainer .inputWithIcon svg{
+  position: absolute;
+  top: -3px;
+  fill: #aaa;
+  font-size: 24px;
+}
+/* End Mobile View Search Box */
+
+/* Start Webview global search box and map search box */
+.global-search input[type=text] {
+  padding-left: 33px;
+  box-shadow: none;
+  border:1px solid grey;
+}
+.global-search i {
+  position: absolute;
+  left: 3%;
+  padding: 5px;
+  top:4%;
+  bottom: 0px;
+  color: #aaa;
+  transition: .3s;
+}
+.map-search input[type=text]{
+  padding-left: 33px;
+  box-shadow: none;
+  border:1px solid grey;
+}
+.map-search svg {
+  position: absolute;
+  left: 4%;
+  top:6%;
+  bottom: 0px;
+  fill: #aaa;
+}
+.map-search i {
+  position: absolute;
+  left: 10px;
+  top:12%;
+  bottom: 0px;
+  color: #aaa;
+  transition: .3s;
+  font-size: 25px !important;
+}
+/* End Webview global search box and map search box */
+
+/* Start Text Styles and Size */
+.mobileViewContainer .inspectionText{
+  font-size: 18px !important;
+  color: #000;
+  padding: 0px 15px 0px 15px !important;
+}
+.mobileViewContainer .siteText{
+  font-size: 18px !important;
+  color: #748A98;
+  padding: 0px 15px 0px 15px !important;
+}
+.mobileViewContainer .inProgress{
+  color: #ea4335;
+  padding: 0px 15px 0px 15px !important;
+}
+.mobileViewContainer .listText{
+  color: #ea4335;
+  padding: 0px 15px 0px 15px !important;
+}
+.mobileViewContainer .completed{
+  color: #006400;
+  padding: 0px 15px 0px 15px !important;
+}
+.mobileViewContainer .titleText{
+  color: var(--main-bg-color);
+  padding: 0px 15px 0px 15px !important;
+  font-size: 18px !important;
+  background-color: #f5f5f5;
+}
+.mobileViewContainer .date{
+  background-color: #CEE5E9;
+  padding: 0px 15px 0px 15px !important;
+}
+/* End Text Styles and Size */
+/* nav-bar dropdown-toggle*/
+a.nav-link.dropdown-toggle::after {
+  display: none;
+}
+/* ui.dropdown-toggle */
+.ui-dropdown-trigger-icon.ui-clickable.pi-caret-down::before{
+  display: block !important;
+}
+/* Mobile Loder */
+i.mobileLoader {
+  position: fixed;
+  top: 50%;
+  left: 45%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);;
+  font-size: 3em;
+  }
+
+/* Webview Loader */
+i.webviewLoader {
+  position: fixed;
+  top: 50%;
+  left: 48%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);;
+  font-size: 4em;
+  }
+  .modal-header>.close:focus, .modal-header>.close:active {
+    outline: none !important;
+    box-shadow: none;
+}
+.ui-corner-all {
+  border-radius: 0px !important;
+}
+/* Start Mobile View 768px Layout */
+@media (max-width: 768px) {
+   /* Parent Id.. */
+ #content {
+  width: 100%;
+  padding: 20px;
+  min-height: none;
+  transition: all 0.3s;
+}
+  .container.add-user-container, .container.section-container {
+    margin-top: -10% !important;
+    background-color:white;
+    padding: 3% 3%;
+    border: 0px solid grey;
+    overflow-x: hidden;
+    height: 78vh !important;
+    box-shadow: none;
+  }
+  .container-fluid.map-view-container {
+    margin-top: -10% !important;
+    background-color:white;
+    padding: 3% 3%;
+    border: 0px solid grey;
+    overflow-x: hidden;
+    height: 87vh !important;
+    box-shadow: none;
+  }
+  .container.assign-safety-inspection-container h3, .container-fluid.map-view-container h3 {
+    font-size: 18px !important;
+  }
+  .section-content, .template-content, .map-view-content, .assign-inspection-content {
+    width: 100%;
+    padding: 0px !important;
+    transition: all 0.3s;
+  }
+  .modal-backdrop {
+    position: absolute !important;
+  }
+  .modal {
+    position: absolute !important;
+  }
+}
+/* For touch scroll enable */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 420px) and (max-width: 768px) {
+  /* For make page content scrollable without the top and bottom navbar in ipads */
+  .scroll-content {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: 79vh !important;
+  }
+}
+/* End Mobile View 768px Layout */
+@media (max-width: 375px) {
+  .scroll-content {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 74vh !important;
+  }
+}
+/* Strat Mobile View 414px Layout */
+@media (max-width: 414px) {
+  .container-fluid.map-view-container, 
+  .container.section-container,
+  .container.add-user-container {
+    margin-top: -15% !important;
+    background-color:white;
+    padding: 3% 3%;
+    border: 0px solid grey;
+    overflow-x: hidden;
+    height: 79vh !important;
+    box-shadow: none;
+}
+/* For make page content scrollable without the top and bottom navbar in mobileview */
+.scroll-content {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 73vh !important;
+  }
+  .ui-confirmdialog {
+    width: 90% !important;
+    left: 5% !important;
+  }
+}
+/* for dropdown options menu display in mobileView */
+.mobileViewContainer .dropdown-menu {
+  width: 100%;
+  margin-bottom: 20px;
+}
+/* End Mobile View 414px Layout */
+.mobileViewContainer .sticky-top
+{    position: fixed;
+     width: 100%;
+     padding-top: 70px;
+     background-color: white;
+}
+
+/* .mobileViewContainer a.breadcrumb-item{
+    color:#000000;
+    font-family:Helvetica;
+} */
+ /* .popoverposition .popover{
+  left:60px !important;
+} */
+.mobileViewContainer .text-center{
+    padding-top:10px;
+}
+/* .mobileViewContainer .breadcrumb-item+.breadcrumb-item::before{
+    content:"|";
+    color:white;
+}
+.mobileViewContainer .breadcrumb{
+    background: var(--main-bg-color) !important;
+    padding:0px !important;
+    margin-bottom:0px !important;
+    z-index: auto;
+} */
+  .mobileViewContainer .ui-autocomplete .ui-autocomplete-input{
+      padding-right: 0%;
+  }
+
+/* for aligning the text to left and right */
+.mobileViewContainer .alignright {
+	float: right;
+}
+.mobileViewContainer .alignleft {
+    float: left;
+}
+/* .popover{
+  width: 100% !important;
+  padding: None!important;
+}
+.popover-body {
+  color:#000;
+  padding: 0.5rem, 0.3rem;
+  font-size: 17px;
+} */
+.pi.pi-chevron-circle-right, .pi.pi-chevron-circle-left{
+  font-size: 20px;
+  vertical-align: sub;
+}
+.material-icons.icon,
+.material-label {
+  font-size: 32px;
+  line-height: 1;
+  display: block;
+}
+.pi,.material-icons{
+  cursor: pointer;
+}
+  @media(max-width:500px) {
+    .table-cell, .table-header {
+      word-break: break-all;
+    }
+    /* for dropdown options menu display in ipadView */
+    .mobileViewContainer .dropdown-menu {
+      width: 100%;
+      margin-bottom: 50px;
+    }
+  } 
+ 
+  @media (max-width : 768px){
+    /* for dropdown options menu display in ipadView */
+    .mobileViewContainer .dropdown-menu {
+      width: 100%;
+      margin-bottom: 50px;
+    }
+  .webView {
+    display: none;
+  }
+  .mobileViewContainer .ui-autocomplete-loader{
+    display: none;
+    }
+    #sidebar {
+      position: fixed;
+      width:100%;
+      z-index: 5;
+  }
+  #sidebar.active {
+      margin-left: 0;
+      display: none;
+  }
+  #sidebarCollapse span {
+      display: none;
+  }
+ .material-icons.mdl-badge[data-badge]::after {
+  top: 0.02em;
+  right: 11em;
+} 
+.mobileViewContainer input[type=text], input[type=password],
+ input[type=email], textarea[type=text]{
+  width:100%;
+  height: 40px;
+  border-radius:0px !important;
+  outline:none;
+  transition:.3s;
+}
+  }
+  .ui-chkbox-box.ui-state-active, .ui-radiobutton-box.ui-state-active{
+    border: 1px solid var(--main-bg-color) !important;
+    background: var(--main-bg-color) !important;
+    color: #FFFFFF;
+  } 
+  .ui-widget-header .ui-button, .ui-widget-content .ui-button, .ui-widget.ui-button, .ui-button {
+    background: var(--main-bg-color) !important;
+    border: var(--main-bg-color) !important;
+  }
+  .ui-datepicker.ui-widget .ui-datepicker-calendar td a.ui-state-active{
+    background-color: var(--main-bg-color) !important;
+    color: #ffffff !important;
+  }
+  .ui-state-highlight {
+    border-color: var(--main-bg-color) !important;
+    background-color: var(--main-bg-color) !important;
+    color: #FFFFFF;
+}
+@media (min-width : 769px){
+  /* Parent Id.. */
+  #content {
+    width: 100%;
+    padding: 20px;
+    min-height: 570px;
+    transition: all 0.3s;
+  }
+  .material-icons.mdl-badge[data-badge]::after {
+    top: -.40px;
+    right: 75px;
+  } 
+  .ui-widget-header .ui-inputtext, .ui-widget-content .ui-inputtext {
+    text-overflow: ellipsis !important;
+  }
+  .mobileView {
+    display: none;
+  }
+}
+  .ui-dropdown-panel .ui-dropdown-filter-container .ui-dropdown-filter-icon {
+    margin: -10px -10px 0px 0px;
+  }
+  .ui-dropdown .ui-dropdown-panel, .ui-calendar .ui-datepicker {
+    z-index:2001 !important;
+  }
+  /* .popover {
+    z-index: auto !important;
+  } */
+  .webViewContainer .pi.pi-search {
+    font-size: 23px !important;
+  }
+  .ui-paginator .ui-paginator-page.ui-state-active{
+    background: var(--main-bg-color) !important;
+    color: #ffffff !important;
+    border-color: var(--main-bg-color) !important;
+  }
+   mark {
+    background-color: yellow !important;
+    color: black;
+  }
+  .wrapper .dropdown-width.ui-dropdown{
+    width:200px !important;
+  }
+  .wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+  }
+  /* For removing the box shadow for the textbox. */
+  .ui-dropdown-item:hover,.ui-dropdown-item:focus,
+  .ui-dropdown-item:active,
+  .ui-inputtext:focus,
+  .ui-inputtext:active,
+  .ui-button:focus,
+  .ui-button:active{
+    outline: 0 !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+  }
+  @media (max-width: 414px) {
+    .material-icons.mdl-badge[data-badge]::after {
+      top: 0.02em;
+      right: 1.5em;
+    }
+  }
+  @media (max-width: 414px) and ( min-height: 812px) {
+    .scroll-content {
+     overflow-y: scroll;
+     overflow-x: hidden;
+     height: 68vh !important;
+    }
+       /* For the subheader in some pages */
+   .fixed-top.grad1{
+    background: var(--main-bg-color);
+    text-align: center;
+    height:auto;
+    vertical-align:fit-content;
+    color:white; 
+    font-family:Helvetica;
+    font-style:Title Regular;
+    vertical-align: middle;
+    z-index: 1 !important;
+    padding-top: 35px !important;
+  }
+  }
+  /* For the iPhoneX portrait view */
+@media (max-width: 380px) and (min-height: 812px){ 
+  .modal-holder .modal-dialog {
+  position: absolute;
+  bottom: 25px !important;
+  right: 0 !important;
+  left: 0 !important;
+  transition: .5s ease;
+}
+.container-fluid.map-view-container, 
+.container.section-container,
+.container.add-user-container {
+  margin-top: -15% !important;
+  background-color:white;
+  padding: 3% 3%;
+  border: 0px solid grey;
+  overflow-x: hidden;
+  height: 74vh !important;
+}
+.fixed-top.grad1 {
+  padding-top: 15% !important;
+}
+}
+   /* For cursor pointer  */
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  /* Error message display styles in forms. */
+  .ui-fluid .ui-message, .error-message {
+    color: #ab1a0f;
+  }
+    /* upload file button style in add wind farm and add wind turbine*/
+    .uploadfiletext{
+      background-color: #4285F4 !important;
+    }
+    /* For removing the box background when auto-fill */
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 30px white inset !important;
+      box-shadow: 0 0 0 30px white inset !important;
+    }
+   /* For the subheader in some pages */
+   .fixed-top.grad1{
+    background: var(--main-bg-color);
+    text-align: center;
+    height:auto;
+    vertical-align:fit-content;
+    color:white; 
+    font-family:Helvetica;
+    font-style:Title Regular;
+    vertical-align: middle;
+    z-index: 1 !important;
+    padding-top: 25px;
+  }
+  
+  /* For making the option dropdown related changes. */
+  #filter-options.dropdown-toggle::after {
+  display:none !important;
+  }
+  #filter-options{
+  color:#636363;
+  font-size: 32px;
+  vertical-align: -webkit-baseline-middle;
+  }
+  #filter-options.dropdown-item{
+  color:black !important;
+  }
+  #dropdownicon{
+    display: inline-flex;
+    vertical-align: middle;
+    padding: 5px 5px 5px 5px !important;
+    color: #636363 !important;
+  }
+  .dot-menu-action-icon{
+    color:var(--main-bg-color);
+}
+  #dropdownicon:active, #dropdownicon:focus {
+    color: #fff !important;
+    border: 1px solid var(--main-bg-color) !important;
+  }
+  /* For the label text in each form */
+  .label-text{
+    margin: 10px 0px 5px 0px !important;
+  }
+
+/* For making the textbox border blue when focus */
+input[type=text]:focus
+input[type=text]:active {
+  border: 2px solid var(--main-bg-color) !important;
+  box-shadow: none;
+}
+/**
+making the text-box red when it's not valid.
+*/
+input.ng-invalid.ng-touched {
+  border-bottom: 1px solid red !important;
+}
+p-dropdown.ng-invalid.ng-touched .ui-dropdown{
+  border-bottom: 1px solid red !important;
+}
+/* For disable the click when the form is not valid */
+.disable-click {
+  pointer-events: none;
+}
+
+/* For tap button option in the header */
+.btn-active {
+  border-bottom: 2px solid var(--main-bg-color) !important;
+}
+.dropdown-menu {
+  margin-bottom: 20px;
+}
+/* for displaying the text as link */
+.text-link {
+ color:#007bff !important;
+}
+
+.ui-radiobutton {
+  outline: 0px !important;
+  box-shadow: none !important;
+}
+input[type="radio"]:focus{
+  outline:0 !important;
+}
+
+/* start custom bottom sheet modal */
+.dot-menu-action-icon{
+  color:var(--main-bg-color);
+  font-size: 30px !important;
+  vertical-align:middle;
+}
+.bottom-sheet-row {
+  padding: 15px;
+  border-bottom: 1px solid #c9c9c9;
+}
+.bottom-sheet-row:hover {
+  background-color: #f4f4f4;
+}
+.bottom-sheet-text {
+  color: var(--main-bg-color);
+  font-size: 20px;
+  border-bottom: 1px solid #c9c9c9;
+  padding: 15px !important;
+}
+.bottom-sheet-cancel {
+  color: var(--main-bg-color);
+  font-size: 20px;
+  padding: 15px !important;
+  border-bottom: 0px solid #c9c9c9;
+}
+.bottom-sheet-icon {
+  padding-right: 10px !important;
+}
+.bottom-sheet-body {
+  padding: 0 1rem 0 1rem !important;
+}
+.modal-holder .modal-dialog {
+  position: absolute;
+  bottom: 0 !important;
+  right: 0 !important;
+  left: 0 !important;
+  max-width: none !important;
+  margin: .5rem !important;
+}
+.modal-holder .modal-dialog .modal-content {
+  border-radius: 15px !important;
+}
+.modal-holder .modal-dialog {
+  animation-name: fadeInUp;
+  display: block;
+  animation-duration: 0.2s; 
+}
+@keyframes fadeInUp {
+from {
+      transform: translate3d(0,200px,0);
+  }
+
+  to {
+      transform: translate3d(0,0,0);
+      opacity: 1
+  }
+}
+@media (max-width: 380px) and (min-height: 812px){ 
+  .modal-holder .modal-dialog {
+    bottom: 3% !important;
+  }
+}
+/* end custom bottom sheet modal */
+
+/* start synchronize modal design */
+.modal-sync-holder .modal-dialog {
+  position: absolute;
+  top: 45% !important;
+  right: 0 !important;
+  left: 0 !important;
+  transition: .7s ease;
+}
+.modal-sync-holder .modal-dialog {
+  animation-name: fadeInDown;
+  animation-duration: 0.7s;
+}
+@keyframes fadeInDown {
+from {
+      opacity: 0
+  }
+
+  to {
+      opacity: 1
+  }
+}
+/* End synchronize modal design */
+.webViewContainer .ui-table .ui-table-tbody>tr>td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+.restoreicon {
+  width:22px;
+  height:22px;
+  fill:#636363 ;
+}
+.ui-dropdown:not(.ui-state-disabled):hover,
+ .ui-dropdown:not(.ui-state-disabled):active,
+.ui-dropdown:not(.ui-state-disabled):focus {
+  background-color: #ffffff !important;
+}
+.ui-dropdown .ui-dropdown-label.ui-inputtext {
+  padding: 0.43em !important;
+}
+.align-middle {
+  vertical-align: middle !important;
+}
+.align-right{
+  text-align: right;
+}
+.align-center{
+  text-align: center;
+}

@@ -1,0 +1,5 @@
+<div *ngIf="group" [formGroup]="group">
+  <app-custom-signature-form-control [formControlName]="model?.id" [imageData]="model?.imageDataToEdit" [id]="bindId ? model?.id : null"
+    (change)="onChange($event)">
+  </app-custom-signature-form-control>
+</div>

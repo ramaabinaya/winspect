@@ -1,0 +1,14 @@
+.custom-timepicker-container input{
+    width: 100%;
+    height: 40px;
+}
+.custom-timepicker-container .ui-inputgroup .ui-inputgroup-addon {
+    border-color: var(--main-bg-color) !important;
+    background-color: var(--main-bg-color) !important;
+    color: #ffffff !important;
+    width: 2em !important;
+}
+.clock-icon {
+    font-size: 16px !important;
+    vertical-align: middle;
+}

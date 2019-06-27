@@ -1,0 +1,84 @@
+<div id="content">
+  <div class="container page-container">
+    <div class="row text-left">
+      <div class="col-lg-8 offset-lg-2 col-12 float-left">
+        <h4>Add New Wind Farm</h4>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2 col-12 float-left">
+        <form class="form-group" [formGroup]="windFarmForm">
+          <div class="row">
+            <div class="col-12">
+              <label class="label-text">Wind Farm Name</label>
+              <input type="text" formControlName="name" class="form-control" pInputText />
+              <span class="help-block error-message" *ngIf="windFarmForm?.get('name').hasError('required')
+                && windFarmForm?.get('name').touched">{{messages?.FIELD_REQUIRED}}</span>
+              <span class="help-block error-message" *ngIf="!windFarmForm?.get('name').hasError('required')
+                && windFarmForm?.get('name').errors?.pattern">{{messages?.INVALID_FIELD}}</span>
+              <span class="help-block error-message"
+                *ngIf="!windFarmForm?.get('name').hasError('required')
+                && windFarmForm?.get('name').errors?.windFarmNameAlreadyExists">{{messages?.WINDFARM_NAME_EXISTS}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <label class="label-text">Country</label>
+              <input type="text" formControlName="country" class="form-control" pInputText required />
+              <span class="help-block error-message" *ngIf="windFarmForm?.get('country').hasError('required')
+                  && windFarmForm?.get('country').touched">{{messages?.FIELD_REQUIRED}}</span>
+              <span class="help-block error-message" *ngIf="!windFarmForm?.get('country').hasError('required')
+                 && windFarmForm?.get('country').hasError('maxlength') && windFarmForm?.get('country').touched">
+                {{messages?.MAX_LENGTH}}</span>
+              <span class="help-block error-message" *ngIf="!windFarmForm?.get('country').hasError('required')
+                && windFarmForm?.get('country').errors?.pattern">{{messages?.INVALID_FIELD}}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <label class="label-text">State</label>
+              <input type="text" formControlName="state" class="form-control" pInputText />
+              <span class="help-block error-message"
+                *ngIf="windFarmForm?.get('state').hasError('required') && windFarmForm?.get('state').touched">
+                {{messages?.FIELD_REQUIRED}}</span>
+              <span class="help-block error-message" *ngIf="!windFarmForm?.get('state').hasError('required') && windFarmForm?.get('state').hasError('maxlength')
+                 && windFarmForm?.get('state').touched">{{messages?.MAX_LENGTH}}</span>
+              <span class="help-block error-message" *ngIf="!windFarmForm?.get('state').hasError('required')
+                && windFarmForm?.get('state').errors?.pattern">{{messages?.INVALID_FIELD}}!</span>
+
+            </div>
+          </div>
+          <br /><br />
+          <div class="row">
+            <div class="col-12">
+              <button type="submit" pButton class="btn" [disabled]="!windFarmForm?.valid" label="Add Wind Farm"
+                (click)="addWindFarm()"></button>&nbsp;
+              <button type="button" pButton class="btn" label="Import as CSV" (click)="uploadDialog=true;importCSV()"></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>
+<p-dialog header="Upload Data" modal="modal" [@.disabled]="true" [(visible)]="uploadDialog" [responsive]="true">
+  <div class="row">
+    <div class="col-12">
+      For Upload a file you should have the details in the specified format.
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <a class="text-link" href="../../../../assets/samplecsv/sample_WindFarm.csv">
+        You can download a sample file here..</a>
+    </div>
+  </div><br />
+  <div class="row justify-content-center">
+    <input type="file" class="uploadfiletext" accept=".csv" #file pInputText (change)="onFileUploaded($event)">
+  </div>
+</p-dialog>
+<!-- <p-confirmDialog></p-confirmDialog> -->

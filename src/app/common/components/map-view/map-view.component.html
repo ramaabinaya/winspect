@@ -1,0 +1,338 @@
+<div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer': mobileView}">
+  <div id="content" class="map-view-content">
+    <app-top-navbar [headerDetails]="navbarDetails" *ngIf="mobileView" (leftheaderClicked)="onNavigate('L')">
+    </app-top-navbar>
+    <div class="container-fluid map-view-container page-container scroll-content"
+      [ngClass]="{'touch-scroll' : masterReportExist || childReportExist }">
+      <div class="row" *ngIf="!mobileView">
+        <div class="col-lg-12 col-md-12">
+          <h3>Wind Site Map & Snapshot View</h3>
+        </div>
+      </div>
+      <div class="row" *ngIf="!mobileView">
+        <div class="col-lg-12 col-md-12">
+          <div class="pagetip">
+            Wind Site Map lets you see an overall view of damage information and reports on hovering over sites. And
+            you
+            can see the
+            images that uploaded by clicking the 'click here for snapshot view' and can see the images for the
+            particular
+            section
+            by hovering over the blade image.
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-6 map-search">
+          <p-autoComplete placeholder="Search for site name, location" [suggestions]="filteredLocations"
+            [style]="{'width':'100%'}" [autoHighlight]="true" [inputStyle]="{'width':'100%'}"
+            (completeMethod)="search($event)" (onSelect)="siteLocationSelected($event)" appInput></p-autoComplete>
+          <i class="pi pi-search pi-lg pi-fw" aria-hidden="true" *ngIf="!mobileView"></i>
+          <svg class="float-left" width="32px" height="32px" *ngIf="mobileView">
+            <use xlink:href="assets/symbol-defs.svg#search"></use>
+          </svg>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-6 map-view">
+          <p-gmap id="map" #gmap [options]="options" [overlays]="overlays" styleClass="p-gmap-view"
+            (onOverlayClick)="handleOverlayClick($event)" (onMapReady)="onMapReady($event)"></p-gmap>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row severity-indicator">
+                <i class="pi pi-circle-on" style="color:green"></i>Good
+                <i class="pi pi-circle-on" style="color:yellow"></i>Low
+                <i class="pi pi-circle-on" style="color:#ff8300"></i>Medium
+                <i class="pi pi-circle-on" style="color:red"></i>High
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 hover-on-marker">
+          <div class="card">
+            <div *ngIf="!overlayClicked && reports?.length < 1">
+              Click on any asset to view the summary here
+            </div>
+            <div *ngIf="overlayClicked && !masterReportExist && !childReportExist">
+              <span class="font-weight-bold">{{(messages | async)?.NO_REPORT_FOR_TURBINE}}</span>
+            </div>
+            <ng-container>
+              <div class="row" *ngIf="masterReportExist || childReportExist">
+                <div class="col-md-12">
+                  <span class="font-weight-bold">Wind Turbine Number:</span> {{ windMillId ? windMillId :'NA'}}
+                </div>
+              </div>
+              <ng-container>
+                <div class="row" *ngIf="masterReportExist || childReportExist ">
+                  <div class="col-md-12">
+                    <span class="font-weight-bold">No of Reports: </span>
+                    {{masterReports?.length + childReports?.length}}
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <span class="font-weight-bold"></span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <ng-container
+                      *ngFor="let inspectionSection of recentReport?.assignInspectionUser?.inspectionHeader?.inspectionSections">
+
+                      <ng-container *ngFor="let question of inspectionSection?.questions">
+                        <ng-container *ngFor="let answer of question?.answers">
+                          <ng-container
+                            *ngIf="reports?.length > 0 && answer?.reportId == reports[0]?.id && answer?.questionId == question?.id">
+                            <ng-container
+                              *ngIf="inspectionSection?.sectionName === 'Observation Deatils' && (answer?.answer_numeric || answer?.answer_text || answer?.answer_yn)">
+                              <span class="font-weight-bold">{{question?.questionName}} </span>
+                              {{answer?.answer_numeric}}{{answer?.answer_text}}{{answer?.answer_yn}}
+                            </ng-container>
+                            <ng-container
+                              *ngIf="inspectionSection?.sectionName === 'Photo Documentation' && answer?.imageAnswers?.length > 0">
+                              <div class="row">
+                                <div class="col-md-12 snapshot-link">
+                                  <div>
+                                    <a class="cursor-pointer" (click)="onClicked(answer?.imageAnswers)">Click here Snap
+                                      Shot View</a>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+                            <ng-container
+                              *ngIf="inspectionSection?.sectionName === 'Photo Documentation' && question?.inputTypesProperty?.inputType === 'image' && answer?.imageAnswers?.length < 0">
+                              <div>
+                                No snapshot view is available
+                              </div>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                      <ng-container
+                        *ngIf="inspectionSection?.sectionName === 'Photo Documentation' && inspectionSection?.questions?.length === 0">
+                        <div>
+                          No snapshot view is available
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <div class="row" *ngIf="snapshotDisplay">
+        <div class=" snapshot-view col-md-12">
+          <div class="card">
+            <div class="row">
+              <div class="col-md-12 snapshot-link">
+                Snap Shot View
+                <i class="material-icons float-right" (click)="snapshotDisplay=false">close</i>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 blade-map">
+                <img src="./assets/images/snapshotBladeImage.png" usemap="#bladeMap" />
+                <map name="bladeMap">
+                  <area shape="poly" coords="18,66,25,55,26,60,20,72,26,75,39,80,54,84,66,84,72,83,72,36,57,38,41,46"
+                    title="Section1" (click)="onSectionSelected('Section1');"
+                    (mouseenter)="onSectionSelected('Section1');">
+                  <area shape="poly" coords="73,85,73,36,100,37,100,87" title="Section2"
+                    (click)="onSectionSelected('Section2');" (mouseenter)="onSectionSelected('Section2');">
+                  <area shape="poly"
+                    coords="101,38,101,87,107,89,117,91,128,92,145,91,146,51,161,93,173,91,184,70,184,92"
+                    title="Section3" (click)="onSectionSelected('Section3');"
+                    (mouseenter)="onSectionSelected('Section3');">
+                  <area shape="poly" coords="185,68,185,92,230,91" title="Section4"
+                    (click)="onSectionSelected('Section4');" (mouseenter)="onSectionSelected('Section4');">
+                </map>
+              </div>
+              <div class="col-md-6 blade-map">
+                <ng-container *ngFor="let image of sectionImages;let i=index">
+                  <div class="row" *ngIf="i == imgId">
+                    <div class="col-md-12 top">
+                      {{image?.sectionName}}
+                    </div>
+                    <img class="src-image" [src]="image?.imageLocation" />
+                    <div class="col-md-12 bottom" *ngIf="sectionImages?.length > 0">
+                      <div class="image-description">{{image?.description}}</div>
+                      <div class="row float-right">
+                        <i class="material-icons" (click)="movePrevious()">chevron_left</i>
+                        <div class="text-right">{{i+1}}/{{sectionImages?.length}}</div>
+                        <i class="material-icons" (click)="moveNext(sectionImages?.length)">chevron_right</i>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="!snapshotDisplay">
+        <div class="col-md-12 table-responsive master-table" *ngIf="masterReportExist && !mobileView">
+          <div class="row" style="margin-bottom: 2%;">
+            <div class="col-md-6 float-left">
+              <h5>Master Report</h5>
+            </div>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search"
+                  (input)="filterGlobal($event?.target?.value, 'master')" style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <p-table #masterReportRef [columns]="cols" [value]="masterReports" [paginator]="true" [rows]="10"
+            class="ui-table" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="table-header" [pSortableColumn]="'id'">Report Id
+                  <p-sortIcon [field]="'id'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'name'">Report Title
+                  <p-sortIcon [field]="'name'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'modified'">Date
+                  <p-sortIcon [field]="'modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'userName'">Created By
+                  <p-sortIcon [field]="'userName'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+            </ng-template>
+            <ng-template pTemplate="body" let-report>
+              <tr class="table-cell" *ngIf="report?.bladeType === 'M'" (click)="onRowSelected(report?.id)">
+                <td>{{report?.id}}</td>
+                <td>{{report?.name | titlecase}}</td>
+                <td>{{report?.modified|date:'MM/dd/yy'}}</td>
+                <td>{{report?.userName | titlecase}}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr class="text-center">
+                <td colspan="4">
+                  <h5>No records found!</h5>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="col-md-12 table-responsive child-table" *ngIf="childReportExist && !mobileView">
+          <div class="row" style="margin-bottom: 2%;">
+            <div class="col-md-6 float-left">
+              <h5>Child Report</h5>
+            </div>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search"
+                  (input)="filterGlobal($event?.target?.value, 'child')" style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <p-table #childReportRef [columns]="col" [value]="childReports" [paginator]="true" [rows]="10"
+            class="ui-table" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="table-header" [pSortableColumn]="'bladeType'">Blade Type
+                  <p-sortIcon [field]="'bladeType'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'id'">Report Id
+                  <p-sortIcon [field]="'id'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'name'">Report Title
+                  <p-sortIcon [field]="'name'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'modified'">Date
+                  <p-sortIcon [field]="'modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+                <th class="table-header" [pSortableColumn]="'userName'">Created By
+                  <p-sortIcon [field]="'userName'" ariaLabel="Activate to sort"></p-sortIcon>
+                </th>
+            </ng-template>
+            <ng-template pTemplate="body" let-report>
+              <tr class="table-cell" *ngIf="report?.bladeType !== 'M'" (click)="onRowSelected(report?.id)">
+                <td>{{report?.bladeType}}</td>
+                <td>{{report?.id}}</td>
+                <td>{{report?.name | titlecase}}</td>
+                <td>{{report?.modified|date:'MM/dd/yy'}}</td>
+                <td>{{report?.userName | titlecase}}</td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr class="text-center">
+                <td colspan="5">
+                  <h5>No records found!</h5>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <!-- admin mobile view -->
+        <div class="container-fluid mobileview-table-container">
+          <p class="tabletitle" *ngIf="masterReportExist && mobileView">Master Report</p>
+          <table class="table table-hover" *ngIf="masterReportExist && mobileView">
+            <tbody>
+              <ng-container *ngFor="let report of reports; let id=index">
+                <tr *ngIf="report?.bladeType === 'M'" class="cursor-pointer" (click)="onRowSelected(report?.id)">
+                  <td>
+                    <div class="titleText">
+                      {{report?.modified|date: 'MM/dd/yy' }}
+                    </div>
+                    <div class="inspectionText">
+                      {{report?.id }}
+                    </div>
+                    <div class="siteText">
+                      {{report?.name | titlecase}}
+                    </div>
+                    <div class="inspectionText">
+                      {{ report?.userName | titlecase}}
+                    </div>
+                  </td>
+                </tr>
+                <p></p>
+              </ng-container>
+            </tbody>
+          </table>
+
+          <p class="tabletitle" *ngIf="childReportExist && mobileView">Child Report</p>
+          <table class="table table-hover" *ngIf="childReportExist && mobileView">
+            <tbody>
+              <ng-container *ngFor="let report of reports; let id=index">
+                <tr *ngIf="report?.bladeType !== 'M'" class="cursor-pointer" (click)="onRowSelected(report?.id)">
+                  <td>
+                    <div class="titleText">
+                      {{report?.modified|date: 'MM/dd/yy' }}
+                    </div>
+                    <div class="inspectionText">
+                      {{report?.id }}
+                    </div>
+                    <div class="siteText">
+                      {{report?.bladeType}}
+                    </div>
+                    <div class="inspectionText">
+                      {{report?.name | titlecase}}
+                    </div>
+                    <div class="inspectionText">
+                      {{ report?.userName | titlecase}}
+                    </div>
+                  </td>
+                </tr>
+                <p></p>
+              </ng-container>
+            </tbody>
+          </table>
+          <!-- End admin mobile view -->
+          <div class="col-12" *ngIf="overlayClicked && !masterReportExist && !childReportExist">
+            {{(messages | async)?.NO_REPORT_FOR_TURBINE}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

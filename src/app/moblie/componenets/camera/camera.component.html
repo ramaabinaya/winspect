@@ -1,0 +1,132 @@
+<div class="container camera-container">
+  <input hidden="true" type="file" accept="image/*" #file pInputText (change)="fileSelected($event)">
+  <div class="row" *ngIf="showPreview">
+    <div class="col-12" style="padding: 0px !important;">
+      <div class="card">
+        <div class="row">
+          <div class="col-12 preview">
+            <ng-container *ngIf="!imageToEdit?.enabled">
+              <ng-container *ngFor="let section of imgData;let j =index">
+                <ng-container *ngIf="section?.sectionName === sectionName">
+                  <div *ngFor="let image of section?.img;let i =index">
+                    <ng-container *ngIf="image?.imgId === imgId && image?.mode !=='D'">
+                      <ng-container *ngIf="networkIsAvailable">
+                        <img class="preview-image" id="preview-image" [src]="image?.imageLocation |safe">
+                        <div class="row icon">
+                          <div class="col-12 camera_actions">
+                            <i class="material-icons header-icons" (click)="rotateImage(-90,j,i)">&nbsp; rotate_left
+                            </i>
+                            <i class="material-icons header-icons" (click)="rotateImage(90,j,i)">
+                              rotate_right
+                            </i>
+                            <i class="material-icons header-icons" (click)="onImageEditWithPaint(j,i)">edit</i>
+                            <i class="material-icons float-right header-icons" (click)="unsavedImage()">close</i>
+                          </div>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="!networkIsAvailable">
+                        <img class="preview-image" id="preview-image" *ngIf="image?.imageFileUri !== null"
+                          [src]="image?.imageFileUri |safe">
+                        <img class="preview-image" id="preview-image" *ngIf="image?.imageFileUri === null"
+                          src="./assets/images/img_not_available_icon.jpg">
+                        <div class="row icon">
+                          <div class="col-md-12">
+                            <i class="material-icons float-right" (click)="display=true">close</i>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <div class="preview-image" *ngIf="imageToEdit?.enabled">
+              <app-sketch [imageToEdit]="imageToEdit?.imageData" (imageEdited)="onSketchCompleted($event)"></app-sketch>
+            </div>
+          </div>
+        </div>
+
+        <div class="row bottom icon" *ngIf="!imageToEdit?.enabled">
+          <div class="col-md-12">
+            <div class="photo_camera_view">
+              <i class="material-icons camera-icon" (click)="showPreview = false;initView();">
+                photo_camera
+              </i>
+              <input type="text" pInputText [(ngModel)]="caption" (focus)="onFocau()" (blur)="onAddCaption()"
+                placeholder="Add caption" appInput />
+              <span class="arrow float-right" (click)="onSave()">Done</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row small-images">
+    <div class="col-12" style="padding: 0px !important;">
+      <div class="card images-container">
+        <div class="row">
+          <div class="col-12">
+            <div class="media-card">
+              <div class="media-view">
+                <ng-container *ngFor="let section of imgData;let j =index">
+                  <ng-container *ngIf="section?.sectionName === sectionName ">
+                    <div class="media-thumb-view" [(appKeyUpListener)]="imgId" [count]="section?.img?.length">
+
+                      <ng-container *ngFor="let image of section?.img;let i =index">
+                        <ng-container *ngIf="image?.mode !=='D'">
+                          <ng-container *ngIf="networkIsAvailable">
+                            <img class="small-img" [ngClass]="{'active':image?.imgId === imgId}"
+                              (click)="imgId = image?.imgId;caption = image?.description;"
+                              [src]="image?.imageLocation |safe">
+                          </ng-container>
+                          <ng-container *ngIf="!networkIsAvailable">
+                            <img class="small-img" *ngIf="image?.imageFileUri !== null "
+                              [ngClass]="{'active':image?.imgId === imgId}"
+                              (click)="imgId = image?.imgId;caption = image?.description;"
+                              [src]="image?.imageFileUri |safe">
+                            <img class="small-img" *ngIf="image?.imageFileUri === null"
+                              [ngClass]="{'active':image?.imgId === imgId}"
+                              (click)="imgId = image?.imgId;caption = image?.description;"
+                              src="./assets/images/img_not_available_icon.jpg">
+                          </ng-container>
+                          <i class="icon pi pi-trash" (click)="onDeleteClicked(i,image?.imgId)"></i>
+                        </ng-container>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+                </ng-container>
+                <!-- </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <p-dialog header="Error" modal="modal" (onHide)="onSave()" [(visible)]="display" [responsive]="true" [@.disabled]="true"
+  [width]="350">
+  Can't open camera. Please Choose another option.
+  <br />
+  <button pButton class="btn" [ngClass]="{'mobile-view-button':isDevice}" label="Okay"
+    (click)="onSave();display = false;"></button>
+</p-dialog> -->
+<!-- <p-dialog header="Message" modal="modal" [(visible)]="msgDisplay" [responsive]="true" [@.disabled]="true" [width]="350">
+  Image size is too large. Please select imgage size lesser than 2 MB.
+  <br /><br />
+  <button pButton class="btn" [ngClass]="{'mobile-view-button':isDevice}" label="Okay" (click)="msgDisplay = false;initView()"></button>
+  </p-dialog> -->
+<!-- <p-dialog header="Message" modal="modal" [(visible)]="displayMessage" [responsive]="true" [@.disabled]="true"
+  [width]="350">
+  You have unsaved images. Are you sure you want to exit?
+  <p-footer>
+    <button type="button" pButton class="btn" [ngClass]="{'mobile-view-button':isDevice}"
+      (click)="onClose();displayMessage = false;" label="Yes"></button>
+    <button type="button" pButton class="btn" [ngClass]="{'mobile-view-button':isDevice}"
+      (click)="displayMessage = false;" label="No"></button>
+  </p-footer>
+</p-dialog> -->
+
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)"
+  (dialogBoxEventEmitter)="dialogBoxAction($event)">
+</app-dialog-box>

@@ -1,0 +1,7 @@
+<div *ngIf="group" [formGroup]="group">
+  <app-custom-timepicker-control
+  [editTime] = "model?.value"
+  [formControlName]="model?.id"
+  [id]="bindId ? model?.id : null">
+  </app-custom-timepicker-control>
+</div>

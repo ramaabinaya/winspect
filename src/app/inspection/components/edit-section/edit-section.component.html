@@ -1,0 +1,71 @@
+<app-top-navbar [headerDetails]="navbarDetails" (leftheaderClicked)="onBackButtonClicked()"
+  (rightheaderClicked)="onEditMode(navbarDetails?.rightheader)" *ngIf="mobileView"></app-top-navbar>
+<div class="container edit-section-container">
+  <div class="row">
+    <div class="col-12">
+      <ul class="list-group" *ngFor="let section of sectionList;let id=index">
+        <li class="list-group-item" (click)="onSectionSelected(section?.id,section?.sectionName)">
+          <div class="float-left">
+
+            <i class="pi pi-minus-circle" *ngIf="editMode && sectionList?.length > 1"
+              (click)="deleteSection($event,section?.id,id)"></i>
+            {{section?.sectionName | titlecase}}
+          </div>
+          <div class="float-right">
+            <i class="pi pi-check float-right" *ngIf="section?.id === activeSectionId"></i>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="add-fab" *ngIf="editSectionContainer === 'EditSectionContainer'">
+  <i class="material-icons plus-alignment" (click)="openAddNewSectionModal(addSectionModal)">add</i>
+</div>
+<ng-template #addSectionModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Add New Section</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="row">
+        <div class="form-group col-12">
+          <input class="form-control" type="text" pInputText #sectionName placeHolder="Section Name"
+            [navbarType]="'EditSectionContainer'" appInput>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="mobile-view-button" (click)="d('Cross click')">Cancel</button>
+    <button type="button" class="mobile-view-button" aria-label="Close" (click)="d('Cross click')"
+      (click)="addNewSection(sectionName?.value)">Add</button>
+  </div>
+</ng-template>
+
+<ng-template #editSectionModal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Edit Section</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form *ngIf="editMode">
+      <div class="row">
+        <div class="form-group col-12">
+          <input type="text" class="form-control" name="editSectionName" pInputText [(ngModel)]="selectedSectionName"
+            placeHolder="Section Name" [navbarType]="'EditSectionContainer'" appInput>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="mobile-view-button" (click)="d('Cross click')">Cancel</button>
+    <button type="button" class="mobile-view-button" aria-label="Close" (click)="d('Cross click')"
+      (click)="editSectionName()">Edit</button>
+  </div>
+</ng-template>

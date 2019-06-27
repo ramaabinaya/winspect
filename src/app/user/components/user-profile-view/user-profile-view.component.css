@@ -1,0 +1,18 @@
+.profile-view-container .card-text-view{
+  line-height: 2;
+}
+.profile-view-container .justify-content-center {
+  padding-top: 5% !important;
+}
+.profile-view-card {
+  margin-top: 10%;
+  width: 400px !important;
+  padding:2%;
+  box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.profile-icon {
+  color: var(--main-bg-color) !important;
+}
+.profile-header {
+  color: #636363 !important;
+}

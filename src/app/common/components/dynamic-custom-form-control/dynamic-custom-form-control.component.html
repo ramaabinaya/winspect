@@ -1,0 +1,7 @@
+<div *ngIf="group" [formGroup]="group">
+  <app-custom-form-control
+    [formControlName]="model?.id" 
+    [id]="bindId ? model?.id : null"  
+    [ngClass]="[getClass('element', 'control'), getClass('grid', 'control')]"
+    (change)="onChange($event)"></app-custom-form-control>
+</div>

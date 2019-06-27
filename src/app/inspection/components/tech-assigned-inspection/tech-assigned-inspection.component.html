@@ -1,0 +1,236 @@
+<div class="assign-inspection-container" [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer': mobileView}">
+  <div class="wrapper" *ngIf="!mobileView">
+    <app-filter *ngIf="showFilter" [table]="inspecTableRef" (tableFiltered)="getFilteredTable($event)"
+      (filterClosed)="showFilter = event"></app-filter>
+    <div id="content">
+      <div class="container-fluid page-container" *ngIf="!mobileView && assignedInspectionListExist">
+        <ng-container *ngIf="assignedInspection?.length > 0">
+          <div class="row">
+            <div class="col-md-6">
+              <h3>Assigned Inspections</h3>
+            </div>
+            <div class="col-6 warning-indicator">
+              <i class="pi pi-circle-on" style="color:orange"></i>Expires Today
+              &nbsp;<i class="pi pi-circle-on" style="color:rgb(199, 28, 28)"></i>Due Date Expired
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="pagetip" *ngIf="user?.role === 'Admin'">
+                Assigned Inspections, lets you view all the safety inspections that are assigned to the technicians.
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="pagetip" *ngIf="user?.role === 'Technician'">
+                Assigned Inspections, lets you view all the safety inspections that are assigned to you, and can start
+                inspections by clicking
+                on that inspection.
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="showFilter = !showFilter">
+              <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search" (input)="filterGlobal($event?.target?.value)"
+                  style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <br />
+
+          <div class="justify-content-center">
+            <p-table [columns]="cols" #techAssignedInspecTableRef [value]="assignedInspection" [paginator]="true"
+              [rows]="10" class="ui-table">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th class="table-header">Id</th>
+                  <th class="table-header" [pSortableColumn]="'inspectionHeader.name'">Inspection Name
+                    <p-sortIcon [field]="'inspectionHeader.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                  </th>
+                  <th class="table-header" *ngIf="user?.role === 'Admin'" [pSortableColumn]="'user.name'">Technician
+                    Name
+                    <p-sortIcon [field]="'user.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                  </th>
+                  <th class="table-header" [pSortableColumn]="'created'">Assigned Date
+                    <p-sortIcon [field]="'created'" ariaLabel="Activate to sort"></p-sortIcon>
+                  </th>
+                  <th class="table-header" [pSortableColumn]="'dueDate'">Due Date
+                    <p-sortIcon [field]="'dueDate'" ariaLabel="Activate to sort"></p-sortIcon>
+                  </th>
+                  <th *ngIf="user?.role === 'Technician'" class="table-header">Comments</th>
+                  <th *ngIf="user?.role === 'Admin'" class="table-header">
+                    Status
+                  </th>
+                </tr>
+              </ng-template>
+
+              <ng-template pTemplate="body" let-inspection let-i="rowIndex">
+                <tr [ngClass]="{'cursor-pointer': user?.role === 'Technician'}" (click)="onSelected(inspection?.id)">
+                  <td>{{i+1}}</td>
+                  <td>{{inspection?.inspectionHeader?.name | titlecase}}</td>
+                  <td *ngIf="user?.role === 'Admin'">{{inspection?.user?.name}}</td>
+                  <td>{{inspection?.created|date:'MM/dd/yy'}}</td>
+                  <td *ngIf="inspection?.dueDate && inspection?.color">
+                    {{inspection?.dueDate|date:'MM/dd/yy'}} &nbsp;
+                    <span class="badge badge-danger" *ngIf="inspection?.color == 'red'">{{inspection?.toolTip}}</span>
+                    <span class="badge badge-warning"
+                      *ngIf="inspection?.color == 'orange'">{{inspection?.toolTip}}</span>
+                  </td>
+                  <td *ngIf="inspection?.dueDate && !inspection?.color">
+                    {{inspection?.dueDate|date:'MM/dd/yy'}}
+                  </td>
+                  <td *ngIf="!inspection?.dueDate">None</td>
+                  <td *ngIf="inspection?.comments && user?.role === 'Technician'">{{inspection?.comments}}</td>
+                  <td *ngIf="!inspection?.comments && user?.role === 'Technician'">None</td>
+                  <td *ngIf="user?.role === 'Admin'">{{inspection?.inspectionStatus?.name}}</td>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr class="text-center">
+                  <td colspan="6" *ngIf="user?.role === 'Admin'">
+                    <h5>{{messages?.NO_RECORDS_FOUND}}</h5>
+                  </td>
+                  <td colspan="5" *ngIf="user?.role === 'Technician'">
+                    <h5>{{messages?.NO_RECORDS_FOUND}}</h5>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="assignedInspection?.length === 0">
+          <h4 class="row justify-content-center">{{messages ?. TASK_IS_EMPTY}}</h4>
+        </ng-container>
+      </div>
+      <div *ngIf="!assignedInspectionListExist">
+        <i class="pi pi-spin pi-spinner webviewLoader"></i>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="mobileView">
+    <app-top-navbar [headerDetails]="navbarDetails" [sortingDetails]="sortingDetails" (leftheaderClicked)="onNavigate()"
+      (rightheaderClicked)="createsqlitedb()" (keyValues)="searchValue($event)" (clear)="onClear()"
+      (sorting)="sortReport($event)"></app-top-navbar>
+    <div id="tasks1" class="container-fluid mobileview-table-container scroll-content touch-scroll">
+      <table class="table table-hover" *ngIf="assignedInspectionListExist">
+        <tbody>
+          <ng-container *ngFor="let inspection of filteredReport;let i=index">
+            <tr class="container-overlay" id="tablerow" (click)="openBottomSheet(i)">
+              <td class="cursor-pointer">
+                <div class="titleText">
+                  {{inspection?.created|date:'MM/dd/yy'}}
+                </div>
+                <div class="inspectionText">
+                  {{inspection?.inspectionHeader?.name | titlecase}}
+                </div>
+                <div class="siteText" innerHtml="{{ inspection?.windfarm?.name | titlecase}}" *ngIf="!selectedValue">
+                </div>
+                <div class="siteText" innerHtml="{{ inspection?.windfarm?.name | highlight: selectedValue }}"
+                  *ngIf="selectedValue">
+                </div>
+                <div class="col-6 listText float-left" *ngIf="inspection?.dueDate">
+                  {{inspection?.dueDate|date:'MM/dd/yy'}}
+                </div>
+                <div class="col-6 listText float-left" *ngIf="!inspection?.dueDate">
+                  None
+                </div>
+                <div class="col-6 float-right" *ngIf="inspection?.color=='orange'">
+                  <span class="badge badge-warning float-right"
+                    *ngIf="inspection?.color == 'orange'">{{inspection?.toolTip}}</span>
+                </div>
+                <div class="col-6 float-right" *ngIf="inspection?.color=='red'">
+                  <span class="badge badge-danger float-right"
+                    *ngIf="inspection?.color == 'red'">{{inspection?.toolTip}}</span>
+                </div>
+              </td>
+
+              <!-- change due date -->
+              <ng-template #dueDateChange let-c="close" let-d="dismiss">
+                <div class="modal-header">
+                  <h4 class="modal-title">Change Due Date On Inspection</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group" *ngIf="currentActionRow?.dueDate">
+                    <label for="exampleInputFrom">From:</label>
+                    <input type="text" class="form-control" id="fromDate" name="fromDate"
+                      value="{{currentActionRow.dueDate|date:'dd-MM-yyyy'}}" disabled="true">
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      To:
+                    </div>
+                    <div class="col-md-12">
+                      <p-calendar name="dueDate" styleClass="calendar" [minDate]="minDateValue"
+                        [inputStyle]="{'width':'100%'}" [(ngModel)]="toDate" [showIcon]="true" [readonlyInput]="true">
+                      </p-calendar>
+                    </div>
+                  </div>
+                  <br />
+                  <div class="float-right">
+                    <button type="submit" class="mobile-view-button" (click)="onChangeDate()"
+                      (click)="d('Cross click')">Change
+                      Date
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+              <!-- reassign inspection -->
+              <ng-template #reAssign let-c="close" let-d="dismiss">
+                <div class="modal-header">
+                  <h4 class="modal-title">Reassign Inspection</h4>
+                  <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Template Name" id="exampleInputEmail1"
+                      [disabled]="true" aria-describedby="emailHelp"
+                      value="{{currentActionRow?.inspectionHeader?.name | titlecase}}">
+                  </div>
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Assign To</label>
+                    <p-dropdown placeholder="Select a Technician " [style]="{'width':'100%'}" name="toAssign"
+                      [options]="technicians" optionLabel="name" (onChange)="selectedTechnician = $event?.value">
+                    </p-dropdown>
+                  </div>
+                  <button type="submit" id="reassign-btn" class="mobile-view-button"
+                    [disabled]="selectedTechnician? false:true" (click)="onReassign(currentActionRow?.id)"
+                    (click)="d('Cross click')">Assign Inspection
+                  </button>
+                </div>
+              </ng-template>
+              <app-bottom-sheet *ngIf="bottomSheetIndex === i" [bottomModalDetails]="bottomSheetDetails"
+                (bottomSheetClosed)="closeBottomSheet($event)"
+                (bottomSheetEventEmitter)="bottomSheetMenuAction($event, inspection)">
+              </app-bottom-sheet>
+            </tr>
+            <p></p>
+          </ng-container>
+        </tbody>
+      </table>
+      <div *ngIf="filteredReport === null">
+        <i class="pi pi-spin pi-spinner mobileLoader"></i>
+      </div>
+      <div *ngIf="filteredReport?.length === 0 && !resultNotExist">
+        <h4 class="align-center">{{messages ?.TASK_IS_EMPTY}}</h4>
+      </div>
+      <div *ngIf="resultNotExist">
+        <h5 class="align-center">{{messages?.NO_RECORDS_FOUND}}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxEventEmitter)="dialogBoxAction($event)"
+  (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

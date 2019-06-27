@@ -1,0 +1,207 @@
+<div id=content *ngIf="!mobileView">
+  <div class="container-fluid page-container">
+    <div class="row">
+      <div class="col-6">
+        <h3>User Groups</h3>
+      </div>
+      <div class="col-6">
+        <button class="btn btn-primary float-right" (click)="openGroupModel(group)"><i
+            class="material-icons align-middle">add
+          </i>&nbsp;Create New Group</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="pagetip">
+          Manage Groups, lets you view list of user groups created. And selecting the particular row in the list will
+          allow you to
+          add or remove group members from the selected group and can also edit and remove the group.
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="container-fluid group-list-container" *ngIf="groups?.length > 0">
+      <div class="row group-name">
+        <div class="col-12 zero-padding">
+          Name
+        </div>
+      </div>
+      <div class="row group-members-list cursor-pointer" *ngFor="let group of groups; let i = index;"
+        (click)="openInfoGroupModel($event, info, group)">
+        <div class="col-7 name zero-padding">
+          {{group?.name | titlecase}}
+        </div>
+        <div class="col-5 zero-padding align-right">
+          <button class="btn btn-primary" pTooltip="Edit the group"
+            (click)="openEditGroupModel($event, group?.id, editgroup)"><i
+              class="material-icons align-middle">edit</i></button>&nbsp;
+          <button class="btn btn-primary" pTooltip="Remove the group"
+            (click)="openRemoveGroupModel($event, group?.id)"><i
+              class="material-icons align-middle">delete_forever</i></button>
+        </div>
+      </div>
+
+    </div>
+    <div class="container-fluid" *ngIf="groups?.length === 0">
+      <h5 class="row">{{(messages | async)?.GROUP_IS_EMPTY}}</h5>
+    </div>
+  </div>
+
+  <div *ngIf="groups === null && !mobileView">
+    <i class="pi pi-spin pi-spinner webviewLoader"></i>
+  </div>
+</div>
+<div *ngIf="mobileView">
+  <app-top-navbar *ngIf="mobileView" [headerDetails]="navbarDetails" [sortingDetails]="sortingDetails"
+    (leftheaderClicked)="onNavigate()" (rightheaderClicked)="openGroupModel(group)" (keyValues)="searchValue($event)"
+    (clear)="onClear()" (sorting)="sortReport($event)"></app-top-navbar>
+  <div id="groups" class="container-fluid mobileview-table-container scroll-content touch-scroll">
+    <table class="table table-hover">
+      <tbody>
+        <ng-container *ngFor="let group of filteredReport;let id=index">
+          <tr (click)="openBottomSheet(id)">
+            <td class="cursor-pointer">
+              <div class="titleText">
+                {{group?.created | date:'MM/dd/yy'}}
+              </div>
+              <div class="inspectionText" innerHtml="{{ group?.name | titlecase}}" *ngIf="!searchedValue">
+              </div>
+              <div class="inspectionText" innerHtml="{{ group?.name | highlight: searchedValue }}"
+                *ngIf="searchedValue">
+              </div>
+              <div class="siteText" *ngIf="group?.description">
+                {{group?.description}}
+              </div>
+              <div class="siteText" *ngIf="!group?.description">
+                None
+              </div>
+            </td>
+          </tr>
+          <p></p>
+          <app-bottom-sheet *ngIf="bottomSheetIndex === id" [bottomModalDetails]="bottomSheetDetails"
+            (bottomSheetClosed)="closeBottomSheet($event)"
+            (bottomSheetEventEmitter)="bottomSheetMenuAction($event, group)">
+          </app-bottom-sheet>
+        </ng-container>
+      </tbody>
+    </table>
+    <div *ngIf="filteredReport === null">
+      <i class="pi pi-spin pi-spinner mobileLoader"></i>
+    </div>
+    <div *ngIf="filteredReport?.length === 0 && !resultNotExist">
+      <h4 class="align-center">{{(messages | async)?.GROUP_IS_EMPTY}}</h4>
+    </div>
+    <div *ngIf="resultNotExist">
+      <h5 class="align-center">{{(messages | async)?.NO_RECORDS_FOUND}}</h5>
+    </div>
+  </div>
+</div>
+
+
+<!-- Create group -->
+<ng-template #group let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Create Group</h4>
+    <button type="button" class="close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="createGroupForm">
+      <div class="form-group">
+        <label for="name">Group Name</label>
+        <input type="text" pInputText formControlName="name" class="form-control" appInput>
+        <span class="help-block error-message"
+          *ngIf="createGroupForm.get('name').invalid && createGroupForm.get('name').touched">
+          {{(messages | async)?.FIELD_REQUIRED}}</span>
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" pInputText formControlName="description" class="form-control" appInput>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="!createGroupForm.valid" (click)="onCreate()"
+      (click)="d('Cross click')">Create</button>
+  </div>
+</ng-template>
+
+<!-- Edit group -->
+<ng-template #editgroup let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Edit Group</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="editGroupForm">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" pInputText formControlName="name" class="form-control" appInput>
+        <span class="help-block error-message"
+          *ngIf="editGroupForm.get('name').invalid && editGroupForm.get('name').touched">{{(messages | async)?.FIELD_REQUIRED}}</span>
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" pInputText formControlName="description" class="form-control" appInput>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" [disabled]="!editGroupForm?.dirty || !editGroupForm?.valid"
+      (click)="onEditGroup()" (click)="d('Cross click')">Edit</button>
+  </div>
+</ng-template>
+
+<ng-template #info let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Group Info</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body model-scroll" *ngIf="profileView">
+    <div class="row">
+      <div class="col-12 align-center">
+        <h5>{{selectedGroup?.name | titlecase}}</h5>
+        <span class="help-block Name-color">Created by {{adminName | titlecase}}</span>
+      </div>
+      <div class="col-12 cursor-pointer add-to-group" (click)="profileView = false">
+        <i class="material-icons align-middle">add_circle</i>&nbsp;Add to Group
+      </div>
+    </div>
+    <ng-container *ngFor="let technician of technicians;let i = index;">
+      <div class="row added-list" *ngIf="technician?.isMember">
+        <div class="col-12">
+          <i class="material-icons align-middle">account_circle</i>&nbsp;{{technician?.name}}
+          <button class="btn btn-primary float-right remove-btn"
+            (click)="openRemoveMemberModel(technician?.id, i)">Remove</button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="modal-body model-scroll" *ngIf="!profileView">
+    <div class="row">
+      <div class="col-12 align-center">
+        <h5>{{selectedGroup?.name | titlecase}}</h5>
+        <span class="help-block Name-color">Created by {{adminName | titlecase}}</span>
+      </div>
+      <div class="col-12 cursor-pointer add-to-group" (click)="profileView = true">
+        <i class="material-icons align-middle">keyboard_arrow_left</i>&nbsp;Back
+      </div>
+    </div>
+    <ng-container *ngFor="let technician of technicians;let i = index;">
+      <div class="row added-list" *ngIf="!technician?.isMember">
+        <div class="col-12">
+          <i class="material-icons align-middle">account_circle</i>&nbsp;{{technician?.name}}
+          <button class="btn btn-primary float-right remove-btn" (click)="onAddToGroup(technician?.id)">Add</button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxEventEmitter)="dialogBoxAction($event)"
+  (dialogBoxClosed)="dialogBoxClose($event)"></app-dialog-box>

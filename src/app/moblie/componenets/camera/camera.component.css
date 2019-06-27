@@ -1,0 +1,123 @@
+.camera-container{
+  width: 100%;
+  padding: 0px !important;
+  }
+  .bottom.icon{
+  padding-top: 330px;
+  z-index: 600;
+  }
+  .camera-icon{
+  padding-left: 10px;
+  padding-top: 3px;
+  float: left;
+  }
+  .arrow.float-right{
+  font-size: 24px;
+  padding-right: 30px;
+  cursor: pointer;
+  /*color: #ccff00;*/
+  color: white;
+  padding-top: 4px;
+  }
+  .camera-container .card, .preview-image{
+  position: absolute;
+  width:100%;
+  height:420px; 
+  overflow: hidden;
+  }
+  .camera-container .card.images-container{
+  width:100%;
+  height: 54px;
+  border-radius: 0px !important;
+  }
+  .media-card{
+  overflow: hidden;
+  user-select: none;
+  width:100%;
+  /* height: 55px; */
+  }
+  .media-view{
+  width:100%;
+  height: 70px;
+  overflow-y: hidden;
+  overflow-x: auto !important;
+  }
+  .media-thumb-view{ 
+  display: flex !important;
+  }
+  .card-body {
+  padding: 2.15rem !important;
+  }
+  @media (max-width: 768px){
+  
+  .bottom.icon .ui-inputtext{
+  height: 90%;
+  width: 50%;
+  margin-top: 3px;
+  margin-left: 10px;
+  }
+  .arrow.float-right{
+  padding-right: 10px;
+  }
+  i.material-icons.header-icons{
+  margin-right: 0px;
+  margin-top: 10px;
+  }
+  }
+  i.material-icons.header-icons{
+  margin-right: 30px;
+  margin-top: 10px;
+  }
+  .bottom.icon .ui-inputtext{
+  height: 85%;
+  margin-top: 3px;
+  margin-left: 20px;
+  width:65%;
+  max-width: 45%;
+  }
+  .small-img{
+  width: 50px;
+  height: 50px;
+  margin-top: 1px; 
+  margin-left: 1px; 
+  }
+  .small-images{
+  margin-top: 420px;
+  height: 70px;
+  }
+  .small-img.active{
+  border: 1px solid red; 
+  }
+  
+  .camera-container .icon.pi.pi-trash {
+  font-size: 10px;
+  cursor: pointer;
+  z-index: 600;
+  margin-left: -10px;
+  /*position: absolute;*/
+  padding-top: 10px;
+  color: #d0ff14; 
+  }
+  .camera-container .material-icons{
+  color: white;
+  font-size: 24px;
+  cursor:pointer;
+  }
+  .camera-container .camera-icon{
+  color: white;
+  font-size: 48px;
+  cursor:pointer;
+  float: left;
+  }
+  .photo_camera_view{
+  background-color: rgba(0,0,0,0.6);
+  height:50px;
+  /* margin-top: 5px !important; */
+  }
+  .camera_actions{
+  background-color: rgba(0,0,0,0.6);
+  /* height:38px; */
+  }
+  
+  
+  

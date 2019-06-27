@@ -1,0 +1,98 @@
+<div [ngClass]="{'mobileViewContainer':mobileView,'webViewContainer':!mobileView}">
+  <div class="wrapper" *ngIf="!mobileView">
+    <app-filter *ngIf="showFilter" [table]="assignInspectionTableRef" (tableFiltered)="getFilteredTable($event)"
+      (filterClosed)="showFilter = event"></app-filter>
+    <div id="content">
+      <div class="container-fluid page-container" *ngIf="!mobileView && responseReceived">
+        <ng-container *ngIf="archivedReports?.length > 0">
+          <div class="row">
+            <div class="col-md-6 float-left">
+              <h3>Archived Reports</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="pagetip">
+                This is the list of archived reports. In the reports table selecting the restore icon will move the
+                report selected to the
+                View Reports list and delete will delete the report permanently.
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="onFilterShow()">
+              <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText placeholder="Global Search"
+                  (input)="onReportGlobalSearch($event?.target?.value)" style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row justify-content-center">
+            <div class="col-md-12">
+              <p-table [columns]="cols" #assignInspectionRef [value]="archivedReports" [paginator]="true" [rows]="10"
+                class="ui-table">
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="table-header" [pSortableColumn]="'report.id'">Report Id
+                      <p-sortIcon [field]="'report.id'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'inspectionHeader.name'">Inspection Name
+                      <p-sortIcon [field]="'inspectionHeader.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'user.name'">Technician Name
+                      <p-sortIcon [field]="'user.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'windfarm.name'">Client Name
+                      <p-sortIcon [field]="'windfarm.name'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header" [pSortableColumn]="'report.modified'">Date Archived
+                      <p-sortIcon [field]="'report.modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                    </th>
+                    <th class="table-header">Actions</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-reports>
+                  <tr class="table-cell" (click)="onNavigate(reports?.report?.id)">
+                    <td>{{reports?.report?.id}}</td>
+                    <td>{{reports?.inspectionHeader?.name | titlecase}}</td>
+                    <td>{{reports?.user?.name | titlecase}}</td>
+                    <td>{{reports?.windfarm?.name  | titlecase}}</td>
+                    <td>{{reports?.report?.modified | date:'MM/dd/yy' }}</td>
+                    <td>
+                      <i class="material-icons icon-font" (click)="onRestoreClicked(reports?.report?.id,$event)"
+                        pTooltip="Restore this report">
+                        replay
+                      </i>&nbsp;
+                      <i class="material-icons icon-font" pTooltip="Delete this report"
+                        (click)="onDeleteClicked(reports?.id,$event)">
+                        delete_forever
+                      </i>
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                  <tr class="text-center">
+                    <td colspan="6">
+                      <h5>{{(messages | async)?.NO_RECORDS_FOUND }}</h5>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="archivedReports?.length === 0">
+          <h4 class="row justify-content-center">{{(messages | async)?.ARCHIVED_LIST_IS_EMPTY}}</h4>
+        </ng-container>
+      </div>
+      <div *ngIf="!responseReceived">
+        <i class="pi pi-spin pi-spinner webviewLoader"></i>
+      </div>
+    </div>
+  </div>
+</div>

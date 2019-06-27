@@ -1,0 +1,75 @@
+.info-window{
+  background-color:#dff1f1 !important;
+  color: var(--main-bg-color) !important;
+  text-align: center;
+}
+.blade-icon{
+  width: 100%;
+  height: 100%;
+}
+.pi-circle-on{
+  padding-right: 2.5%;
+  line-height: unset;
+}
+ @media (max-height: 1024px) {
+  .full-screen-map {
+    margin-top:-10%;
+    width: 100%;
+  }
+  .responsive-height {
+    height: 880px;
+  }
+  /* .damageIndicatortray {
+    background-color: white;
+    height: 45px;
+  } */
+}
+/* iPhone X */
+@media(min-height: 740px) and (max-height: 815px) {
+  .full-screen-map {
+    width: 100%;
+    margin-top:-18%;
+  }
+  .responsive-height {
+    height: 664px;
+  }
+  .damageIndicatortray {
+    height: 70px !important;
+  }
+}
+/* ipad */
+@media (min-height: 815px) and (max-height: 1025px) {
+  .full-screen-map {
+    width: 100%;
+    margin-top:-10%;
+  }
+  .responsive-height {
+    height: 881px;
+  }
+}
+@media (min-height: 670px) and (max-height: 740px) {
+  .full-screen-map {
+    width: 100%;
+    margin-top:-15%;
+  }
+  .responsive-height {
+    height: 612px;
+  }
+}
+  @media (max-height: 670px){
+  .full-screen-map {
+    width: 100%;
+    margin-top:-16%;
+  }
+  .responsive-height {
+    height: 545px;
+  }
+}
+.icon-label {
+  font-family: "Helvetica Neue",Arial,sans-serif;
+  color: black;
+}
+.damageIndicatortray {
+  background-color: white;
+   height: 45px; 
+}

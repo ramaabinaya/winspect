@@ -1,0 +1,85 @@
+<div id="content">
+  <div class="container page-container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2 col-12 float-left">
+        <h4>Add New Wind Turbine</h4>
+      </div>
+    </div>
+    <br />
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2 col-12">
+        <form class="form-group" [formGroup]="windTurbineForm">
+          <div class="row">
+            <div class="col-12">
+              <label class="label-text">Latitude:</label>
+              <input type="number" formControlName="latitude" class="form-control" pInputText />
+              <span class="error-message" *ngIf="windTurbineForm['controls']?.latitude?.touched &&
+                 windTurbineForm?.get('latitude').hasError('required')">{{messages?.FIELD_REQUIRED}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <label class="label-text">Longitude:</label>
+              <input type="number" formControlName="longitude" class="form-control" pInputText />
+              <span class="error-message" *ngIf="windTurbineForm['controls']?.longitude?.touched &&
+                 windTurbineForm['controls']?.longitude?.hasError('required')">{{messages?.FIELD_REQUIRED}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p class="label-text">Wind Farm:</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <p-dropdown [options]="windFarms" placeholder="Select a Wind Farm" optionLabel="name"
+                [style]="{'width':'100%'}" formControlName="windFarm"></p-dropdown>
+              <span class="error-message" *ngIf="windTurbineForm['controls']?.windFarm?.touched &&
+                 windTurbineForm['controls']?.windFarm?.hasError('required')">{{messages?.FIELD_REQUIRED}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <label class="label-text">Build Year:</label>
+              <input type="number" formControlName="buildYear" class="form-control" pInputText />
+              <span class="error-message" *ngIf="windTurbineForm['controls']?.buildYear?.touched &&
+              windTurbineForm['controls']?.buildYear?.hasError('required')">{{messages?.FIELD_REQUIRED}}</span>
+              <span class="error-message"
+                *ngIf="!windTurbineForm?.get('buildYear').hasError('required') && windTurbineForm?.get('buildYear').touched && 
+                (windTurbineForm['controls']?.buildYear?.hasError('min') || windTurbineForm['controls']?.buildYear?.hasError('max'))">
+                {{messages?.INVALID_FIELD}}
+              </span>
+            </div>
+          </div>
+          <br /><br />
+          <div class="row">
+            <div class="col-12">
+              <button type="submit" pButton class="btn" [disabled]="!windTurbineForm?.valid" label="Add Wind Turbine"
+                (click)="buttonClicked()"></button>&nbsp;
+              <button type="button" pButton class="btn" label="Import as CSV" (click)="uploadDialog=true"></button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>
+<p-dialog header="Upload Data" modal="modal" [@.disabled]="true" [(visible)]="uploadDialog" [responsive]="true">
+  <div class="row">
+    <div class="col-12">
+      For Upload a file you should have the details in the specified format.
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <a class="text-link" href="../../../../assets/samplecsv/sample_WindTurbine.csv">
+        You can download a sample file here..</a>
+    </div>
+  </div><br />
+  <div class="row justify-content-center">
+    <input type="file" class="uploadfiletext" #file accept=".csv" #file pInputText (change)="onUploadFileData($event)">
+  </div>
+</p-dialog>
+<!-- <p-confirmDialog></p-confirmDialog> -->

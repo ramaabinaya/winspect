@@ -1,0 +1,50 @@
+<div class="container-fluid filter-container">
+  <nav class="collapse show" id="sidebar">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="float-left">
+          <div class="row">
+            <div class="col-md-12 float-left">
+              <a class="cursor-pointer" (click)="onFilterClosed()">
+                Hide Filters
+                <i class="pi pi-chevron-circle-right icon-font" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+          <br />
+          <div *ngFor="let filterDetail of filterDetails; let id=index" style="padding-bottom: 2%;font-weight:300">
+            <p-accordion>
+              <p-accordionTab [header]="filterDetail?.header" [selected]="true" style="border-top: 1px #748A98;border-left:0px !important;
+              border-right:9px !important;
+              border-bottom:0px !important;">
+                <p-dropdown *ngIf="filterDetail?.type === 'select'" [style]="{'width': '210px'}"
+                  [optionLabel]="filterDetail?.label" [placeholder]="filterDetail?.placeholder" filter="true"
+                  [options]="filterDetail?.options" showClear="true"
+                  (onChange)="onFilter(filterDetail?.column, $event?.value)" [(ngModel)]="selectedValues[id]">
+                </p-dropdown>
+
+                <p-calendar #daterange *ngIf="filterDetail?.type === 'calendarRange'" [showIcon]="true"
+                  [placeholder]="filterDetail?.placeholder" showButtonBar="true" selectionMode="range"
+                  (onClearClick)="onClear(filterDetail?.column)" [inputStyle]="{'width': '178px'}"
+                  [(ngModel)]="selectedValues[id]" (onTodayClick)="onSelectToday(filterDetail?.column)"
+                  (onSelect)="onSelectRange(daterange,filterDetail?.column)">
+                </p-calendar>
+
+                <p-calendar #date [showIcon]="true" *ngIf="filterDetail?.type === 'calendar'"
+                  [placeholder]="filterDetail?.placeholder" showButtonBar="true"
+                  (onClearClick)="onClear(filterDetail?.column)" (onTodayClick)=" onSelectToday(filterDetail?.column)"
+                  [inputStyle]="{'width': '178px'}" [(ngModel)]="selectedValues[id]"
+                  (onSelect)="onSelectDate(date,filterDetail?.column)">
+                </p-calendar>
+
+                <input #enteredId *ngIf="filterDetail?.type === 'number'" type="number" style="width: 210px;"
+                  placeholder="Enter Report Id" [(ngModel)]="selectedValues[id]"
+                  (input)="onFilter(filterDetail?.column, $event.target.value)" pInputText />
+              </p-accordionTab>
+            </p-accordion>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>

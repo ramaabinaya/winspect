@@ -1,0 +1,35 @@
+.mobileViewContainer .ui-widget-header .ui-inputtext, .ui-widget-content .ui-inputtext {
+  text-overflow: ellipsis;
+  }
+  .modal{
+    padding-top: 10%;
+  }
+.modal-header{
+  background-color: #748a98;
+  font-size:17px;
+  font-family:Helvetica;
+  color: #EEF2F5
+}
+.warning-indicator {
+  font-size: small;
+  display: inline;
+  color:var(--main-bg-color) !important;
+  text-align: right;
+}
+.assign-inspection-container .ui-calendar .ui-inputtext,.ui-inputgroup .ui-inputtext{
+  width: 100%
+}
+#reassign-btn:disabled{
+  opacity: .300;
+}
+.container-overlay:hover .overlay {
+  height: 310px;
+}
+.modal-dialog {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  transition: .5s ease;
+}
+

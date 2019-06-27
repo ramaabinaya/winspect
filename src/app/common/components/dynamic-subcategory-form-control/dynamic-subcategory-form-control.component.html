@@ -1,0 +1,6 @@
+<div *ngIf="group" [formGroup]="group">  
+    <app-custom-subcategory-form-control 
+    [id]="bindId ? model?.id : null"
+    [subCategory] = "model?.subcategoryName">
+     </app-custom-subcategory-form-control>
+</div>

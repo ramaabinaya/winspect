@@ -1,0 +1,315 @@
+<div [ngClass]="{'webViewContainer':!mobileView, 'mobileViewContainer':mobileView}">
+  <div class="wrapper" *ngIf="!mobileView">
+    <app-filter *ngIf="showFilter" [table]="inspectionTemplateRef" (filterClosed)="showFilter = event"
+      (tableFiltered)="getFilteredTable($event)"></app-filter>
+    <div id="content" class="template-content">
+      <div class="container-fluid page-container"
+        *ngIf="(!archivedTemplateView && inspections !== null) || (archivedTemplateView && archivedInspection !== null)">
+        <ng-container
+          *ngIf="(!archivedTemplateView && inspections?.length > 0) || (archivedTemplateView && archivedInspection?.length>0)">
+          <div class="row">
+            <div class="col-md-6">
+              <h3 *ngIf="!archivedTemplateView && inspections?.length > 0">Inspection Templates</h3>
+              <h3 *ngIf="archivedTemplateView && archivedInspection?.length>0">Archived Inspection Templates</h3>
+            </div>
+            <div class="col-md-6">
+              <button type="button" *ngIf="!archivedTemplateView" pButton class="btn float-right" (click)="newTemplate()"
+                [routerLink]="['/app/inspection/createtemplate']" label="New Template"></button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="pagetip" *ngIf="currentUser?.role === 'Technician'">
+                Choose a template to add additional reports to your assignment. You will be able to select the client,
+                turbine and blade
+                after this.
+              </div>
+              <div class="pagetip" *ngIf="archivedTemplateView && currentUser?.role === 'Admin'">
+                Archived Inspections, lets you view the list of inspections that are archived. You will be able to
+                Restore these archived
+                records.
+              </div>
+              <div class="pagetip" *ngIf="!archivedTemplateView && currentUser?.role === 'Admin'">
+                Lets you view the list of available inspections. And you can create a new template inspection form by
+                clicking the 'New Template'.
+                Also you can edit and delete the inspections that are listed here.
+              </div>
+            </div>
+          </div><br />
+          <div class="row" *ngIf="!assignView">
+            <a class="col-md-6 cursor-pointer" *ngIf="!showFilter" (click)="showFilter = !showFilter">
+              <i class="pi pi-chevron-circle-left icon-font" aria-hidden="true"></i> Show Filters</a>
+            <div class="col-lg-6 col-md-6 float-right">
+              <div class="global-search">
+                <input type="text" pInputText [(ngModel)]="globalSearchVal" placeholder="Global Search"
+                  (input)="filterGlobal($event?.target?.value)" style="width:100%">
+                <i class="pi pi-search pi-lg pi-fw" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+          <br />
+          <ng-container *ngIf="!assignView">
+            <div class="row">
+              <div class="col-md-12 table-responsive">
+                <p-table class="ui-table" [columns]="cols" #inspectionTemplateRef
+                  [value]="!archivedTemplateView ? inspections : archivedInspection" [paginator]="true" [rows]="10"
+                  *ngIf="archivedTemplateView && archivedInspection?.length>0 || !archivedTemplateView && inspections?.length > 0">
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th class="table-header" [pSortableColumn]="'id'">Inspection Id
+                        <p-sortIcon [field]="'id'" ariaLabel="Activate to sort"></p-sortIcon>
+                      </th>
+                      <th class="table-header" [pSortableColumn]="'name'">Inspection Name
+                        <p-sortIcon [field]="'name'" ariaLabel="Activate to sort"></p-sortIcon>
+                      </th>
+                      <th class="table-header" [pSortableColumn]="'modified'">Date
+                        <p-sortIcon [field]="'modified'" ariaLabel="Activate to sort"></p-sortIcon>
+                      </th>
+                      <th class="table-header" [pSortableColumn]="'instructions'">Instructions
+                        <p-sortIcon [field]="'instructions'" ariaLabel="Activate to sort"></p-sortIcon>
+                      </th>
+                      <th class="table-header" [pSortableColumn]="'inspectionReportType'">Report Type
+                        <p-sortIcon [field]="'inspectionReportType'" ariaLabel="Activate to sort"></p-sortIcon>
+                      </th>
+                      <th class="table-header">Actions</th>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-inspection let-i="rowIndex">
+                    <tr class="table-cell cursor-pointer" (click)="onInspectionSelected(inspection?.id)">
+                      <td>{{inspection?.id}}</td>
+                      <td>{{inspection?.name | titlecase}}</td>
+                      <td>{{inspection?.modified | date:'MM/dd/yy'}}</td>
+                      <td *ngIf="inspection?.instructions">{{inspection?.instructions}}</td>
+                      <td *ngIf="!inspection?.instructions">None</td>
+                      <td>{{inspection?.inspectionReportType}}</td>
+                      <td>
+                        <i class="material-icons icon-font"
+                          *ngIf="currentUser?.role === 'Admin' && !archivedTemplateView"
+                          pTooltip="Delete this inspection" (click)="onDeleteSelected($event,inspection)">
+                          delete_forever
+                        </i>&nbsp;
+                        <i class="material-icons icon-font"
+                          *ngIf="currentUser?.role === 'Admin' && !archivedTemplateView"
+                          pTooltip="Assign bulky inspection"
+                          (click)="openAssignModal($event, bulkAssign, inspection?.id)">
+                          format_list_numbered
+                        </i>&nbsp;
+                        <i class="material-icons icon-font"
+                          *ngIf="currentUser?.role === 'Admin' && archivedTemplateView"
+                          (click)="onRestoreTemplate($event, inspection?.id)" pTooltip="Restore this inspection">
+                          replay
+                        </i>&nbsp;
+                        <i class="material-icons icon-font"
+                          *ngIf="(currentUser?.role === 'Admin' && !archivedTemplateView) || currentUser?.role === 'Technician'"
+                          pTooltip="Edit this inspection" (click)="onEdit($event,inspection)">edit</i>&nbsp;
+                        <i class="material-icons icon-font" *ngIf="currentUser?.role === 'Technician'"
+                          (click)="onTemplateSelected(inspection?.id)"
+                          pTooltip="Start Inspection with this template">assignment</i>
+                      </td>
+                      <ng-template #bulkAssign let-c="close" let-d="dismiss">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Bulk Assign</h4>
+                          <button type="button" class="close" aria-label="Close" (click)="d('Cross click')"
+                            (click)="bulkAssignReset()">
+                            <span aria-hidden="true">×</span>
+                          </button>
+                        </div>
+                        <form class="form-group" [formGroup]="bulkassignForm">
+                          <div class="modal-body bulkAssignBody">
+                            <div class="row">
+                              <div class="col-6">
+                                <!-- <p-dropdown [style]="{'width':'100%'}" placeholder="Select a Safety Inspection"
+                                  (onChange)="onChangeTemplate($event?.value?.name)" [options]="inspectionTemplate"
+                                  optionLabel="name" formControlName="template"></p-dropdown> -->
+                                <input class="form-control" type="text" [readOnly]="true" pInputText class="readonly"
+                                  formControlName="template" appInput>
+                              </div>
+                              <div class="col-6" style="padding-right: 2rem;">
+                                <p-dropdown [style]="{'width':'100%'}" #siteloc
+                                  (onChange)="locationId = $event?.value?.id" placeholder="Select a Site Location"
+                                  [options]="siteLocations" optionLabel="name" formControlName="location"></p-dropdown>
+                              </div>
+                            </div>
+                            <div class="row" *ngIf="errorMsg">
+                              <div class="col-12">
+                                <p style="color: rgb(192, 28, 28)">{{errorMsg}}</p>
+                              </div>
+                            </div>
+                            <div class="bulkassign-container">
+                              <div class="container">
+                                <div class="row" *ngFor="let user of users;let i=index"
+                                  style="margin-bottom: 10px !important;margin-right: 2px;">
+                                  <div class="col-8" style="padding: 0px;vertical-align: middle;">{{user?.firstName |
+                                    titlecase}}
+                                    {{user?.lastName | titlecase}}</div>
+                                  <div class="col-4" style="padding: 0px;vertical-align: middle;">
+                                    <button class="btn btn-primary float-right bulk-assign-btn"
+                                      *ngIf="user?.status === 1" (click)="onAssignBulk(user?.id)">Assign</button>
+                                    <button class="btn btn-primary float-right bulk-assign-btn assigned-btn"
+                                      *ngIf="user?.status === 0"><i class="pi pi-check"></i> Assign</button>
+                                  </div>
+                                </div>
+
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </ng-template>
+                    </tr>
+                  </ng-template>
+                  <ng-template pTemplate="emptymessage">
+                    <tr class="text-center">
+                      <td colspan="6">
+                        <h5>{{messages?.NO_RECORDS_FOUND}}</h5>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="assignView">
+            <div class="row">
+              <div class="col-md-12"><label for="siteLocation">Site Location:</label></div>
+              <div class="col-md-12">
+                <p-dropdown [style]="{'width':'100%'}" id="siteLocation" placeholder="Select a site location"
+                  [options]="siteLocations" [(ngModel)]="siteLocation" optionLabel="name"></p-dropdown>
+              </div>
+            </div>
+            <br />
+            <button type="button" pButton class="btn" (click)="assignTemplate()" label="Assign"></button>
+          </ng-container>
+        </ng-container>
+        <div class="row justify-content-center" *ngIf="(archivedTemplateView && archivedInspection?.length === 0)">
+          <h4>{{messages?.ARCHIVED_LIST_IS_EMPTY}}</h4>
+        </div>
+        <div class="row justify-content-center"
+          *ngIf="(disconnected && filteredRecord?.length === 0) || (!archivedTemplateView && inspections?.length === 0)">
+          <h4>{{messages?.TEMPLATE_IS_EMPTY}}</h4>
+        </div>
+      </div>
+      <div
+        *ngIf="(!archivedTemplateView && inspections === null) || (archivedTemplateView && archivedInspection === null)">
+        <i class="pi pi-spin pi-spinner webviewLoader"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- mobileView -->
+  <div *ngIf="mobileView">
+    <app-top-navbar [headerDetails]="navbarDetails" [sortingDetails]="sortingDetails" [selectedValue]="selectedValue"
+      [headerTab]="headerTab" (tabAction)="tabAction($event)" (leftheaderClicked)="onNavigate('L')"
+      (rightheaderClicked)="onNavigate('R')" (keyValues)="userSelected($event)" (clear)="onClear()"
+      (sorting)="sortReport($event)"></app-top-navbar>
+
+    <div id="template1" class="container-fluid mobileview-table-container scroll-content"
+      [ngClass]="{'touch-scroll': !assignView}">
+      <ng-container *ngIf="!assignView">
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-hover" *ngIf="!archivedTemplateView">
+              <ng-container *ngFor="let inspection of filteredRecord;let i=index">
+                <tr (click)="openBottomSheet(i, inspection)">
+                  <td class="cursor-pointer">
+                    <div class="titleText">
+                      {{inspection?.modified | date:'MM/dd/yy'}}
+                    </div>
+
+                    <div class="inspectionText" innerHtml=" {{ inspection?.name | titlecase}}" *ngIf="!selectedValue">
+                    </div>
+                    <div class="inspectionText" innerHtml=" {{ inspection?.name | highlight: selectedValue }}"
+                      *ngIf="selectedValue">
+                    </div>
+                    <div class="siteText">
+                      {{inspection?.ownername | titlecase}}
+                    </div>
+                    <div class="listText" *ngIf="inspection?.instructions">
+                      {{inspection?.instructions}}
+                    </div>
+                    <div class="listText" *ngIf="!inspection?.instructions">
+                      None
+                    </div>
+                  </td>
+                  <app-bottom-sheet *ngIf="bottomSheetIndex === i" [bottomModalDetails]="bottomSheetDetails"
+                    (bottomSheetClosed)="closeBottomSheet($event)"
+                    (bottomSheetEventEmitter)="bottomSheetMenuAction($event, inspection)">
+                  </app-bottom-sheet>
+                </tr>
+                <p></p>
+              </ng-container>
+
+            </table>
+
+            <!-- archived template view -->
+            <table class="table table-hover" *ngIf="archivedTemplateView">
+              <tbody>
+                <ng-container *ngFor="let inspection of filteredRecord; let id=index">
+                  <tr>
+                    <td>
+                      <div class="titleText" *ngIf="!disconnected">
+                        {{inspection?.modified|date:'MM/dd/yy'}}
+                        <p class="alignright">
+                          <i class="material-icons icon-font" (click)="openRestoreModal(inspection)">
+                            replay
+                          </i>
+                        </p>
+                      </div>
+                      <div class="titleText" *ngIf="disconnected">
+                        {{inspection?.modified}}
+                      </div>
+                      <div class="inspectionText" innerHtml=" {{ inspection?.name | titlecase}}" *ngIf="!selectedValue">
+                      </div>
+                      <div class="inspectionText" innerHtml=" {{ inspection?.name | highlight: selectedValue }}"
+                        *ngIf="selectedValue">
+                      </div>
+                      <div class="siteText">
+                        {{inspection?.ownername | titlecase}}
+                      </div>
+                      <div class="listText">
+                        {{inspection?.instructions}}
+                      </div>
+                    </td>
+                  </tr>
+                  <br />
+                </ng-container>
+              </tbody>
+            </table>
+            <div *ngIf="filteredRecord === null">
+              <i class="pi pi-spin pi-spinner mobileLoader"></i>
+            </div>
+            <div *ngIf="filteredRecord?.length === 0 && !resultNotExist && !archivedTemplateView">
+              <h4>{{messages?.TEMPLATE_IS_EMPTY}}</h4>
+            </div>
+            <div *ngIf="filteredRecord?.length === 0 && !resultNotExist && archivedTemplateView">
+              <h4>{{messages?.ARCHIVED_LIST_IS_EMPTY}}</h4>
+            </div>
+            <div *ngIf="resultNotExist">
+              <h5 class="align-center">{{messages?.NO_RECORDS_FOUND}}</h5>
+            </div>
+            <!-- End archived Template view -->
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="assignView">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12"><label for="siteLocation">Site Location:</label></div>
+            <div class="col-md-12">
+              <p-dropdown [style]="{'width':'100%'}" id="siteLocation" placeholder="Select a site location"
+                [options]="siteLocations" [(ngModel)]="siteLocation" optionLabel="name"></p-dropdown>
+            </div>
+          </div>
+          <br />
+          <button type="button" pButton class="btn" (click)="assignTemplate()" label="Assign"></button>
+        </div>
+      </ng-container>
+    </div>
+    <div class="add-fab"
+      *ngIf="(!archivedTemplateView && !assignView) && (!disconnected && !resultNotExist) && !hideFab">
+      <i class="material-icons plus-alignment" [routerLink]="['/app/inspection/createtemplate']">add</i>
+    </div>
+  </div>
+</div>
+<app-dialog-box *ngIf="dialogVisible" [dialogBoxDetails]="dialogBoxDetails"
+  (dialogBoxEventEmitter)="dialogBoxAction($event)" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

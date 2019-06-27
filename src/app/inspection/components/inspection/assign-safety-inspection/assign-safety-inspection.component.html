@@ -1,0 +1,114 @@
+<div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer': mobileView}">
+  <div id="content" class="assign-inspection-content">
+    <app-top-navbar [headerDetails]="navbarDetails" *ngIf="mobileView" (leftheaderClicked)="onNavigate('L')">
+    </app-top-navbar>
+    <div class="container-fluid tab-container" *ngIf="mobileView">
+      <div class="row tab-section">
+        <div class="col-6" [ngClass]="{'activeTab': firstTab}" (click)="onUserType();firstTab = true">Single</div>
+        <div class="col-6" [ngClass]="{'activeTab': !firstTab}" (click)="onUserType();firstTab = false">Group</div>
+      </div>
+    </div>
+    <div class="container assign-safety-inspection-container page-container scroll-content">
+      <div class="row" *ngIf="!mobileView">
+        <div class="col-lg-8 offset-lg-2 col-md-12 float-left">
+          <h3>Assign Safety Inspection</h3>
+        </div>
+      </div>
+      <div class="row" *ngIf="!mobileView">
+        <div class="col-lg-8 offset-lg-2 col-md-12">
+          <div class="pagetip">
+            Assign Safety Inspection, lets you assign a selected inspection to the
+            selected technician or to the selected group with the particular windfarm.
+          </div>
+        </div>
+      </div><br />
+      <div class="row">
+        <div class="col-lg-8 offset-lg-2 col-md-12 float-left">
+          <form [formGroup]="assignInspectionForm">
+            <div class="row" *ngIf="!mobileView">
+              <div class="col-lg-12 col-md-12">
+                <label for="Assign User" class="assigned">Select the user</label>
+              </div>
+              <div class="col-lg-12 col-md-12">
+                <input type="radio" formControlName="userType" value="Single User" (change)="onUserType()">&nbsp;Single
+                User&nbsp;&nbsp;
+                <input type="radio" formControlName="userType" value="Group of Users"
+                  (change)="onUserType()">&nbsp;Group
+                of Users
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <label for="Assign User" class="assigned">Assign User</label>
+              </div>
+              <div class=" col-lg-12 col-md-12">
+                <p-dropdown autoWidth="false" placeholder="Select a User" formControlName="technician"
+                  [style]="{'width':'100%'}" [options]="technicians" optionLabel="name"></p-dropdown>
+                <span class="error-message" *ngIf="assignInspectionForm['controls']?.technician?.touched &&
+                  assignInspectionForm?.get('technician')?.hasError('required')">{{messages.FIELD_REQUIRED}}</span>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <label for="Assign Type of Inspection" class="assigned"> Assign Type of Inspection</label>
+              </div>
+              <div class="col-lg-12 col-md-12">
+                <p-dropdown [style]="{'width':'100%'}" placeholder="Select a Safety Inspection" [options]="inspection"
+                  formControlName="inspectionName" optionLabel="name"></p-dropdown>
+                <span class="error-message" *ngIf="assignInspectionForm['controls']?.inspectionName?.touched &&
+                  assignInspectionForm?.get('inspectionName')?.hasError('required')">{{messages.FIELD_REQUIRED}}</span>
+              </div>
+            </div><br />
+
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <label for="Assign Site Location" class="assigned"> Assign Site Location</label>
+              </div>
+              <div class="col-lg-12 col-md-12">
+                <p-dropdown [style]="{'width':'100%'}" placeholder="Select a site location" [options]="siteLocations"
+                  formControlName="siteLocation" optionLabel="name"></p-dropdown>
+                <span class="error-message" *ngIf="assignInspectionForm['controls']?.siteLocation?.touched &&
+                  assignInspectionForm?.get('siteLocation')?.hasError('required')">{{messages.FIELD_REQUIRED}}</span>
+              </div>
+            </div><br />
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <label for="Due Date" class="assigned">Due Date</label>
+              </div>
+              <div class="col-lg-12 col-md-12">
+                <p-calendar [inputStyle]="{'width':'100%'}" formControlName="dueDate" styleClass="calendar"
+                  [minDate]="minDateValue" [readonlyInput]="true" [showIcon]="true"></p-calendar>
+                <span class="error-message" *ngIf="assignInspectionForm['controls']?.dueDate?.touched &&
+                  assignInspectionForm?.get('dueDate')?.hasError('required')">
+                  <p> {{messages.FIELD_REQUIRED}} </p>
+                </span>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <label for="Comments" class="comments assigned">Comments</label>
+              </div>
+              <div class="col-lg-12 col-md-12">
+                <textarea pInputTextarea autoResize="autoResize" placeholder="Your comments here..."
+                  formControlName="comments" style="width:100%;" appInput [navbarType]="'BottomTabMenu'"></textarea>
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <button pButton class="btn float-right" [disabled]="!assignInspectionForm?.valid" (click)="onAssign()"
+                  label="Assign Inspection"></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<p-confirmDialog></p-confirmDialog>
+<app-dialog-box *ngIf="dialogVisible" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

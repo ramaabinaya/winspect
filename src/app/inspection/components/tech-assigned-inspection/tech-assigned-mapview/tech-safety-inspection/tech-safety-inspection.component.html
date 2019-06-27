@@ -1,0 +1,4 @@
+<div [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer':mobileView}">
+  <app-section-wizard [formName]="formName" [message]="dialogInfo" [editId]="editId"
+    (buttonClicked)="buttonTriggered($event)"></app-section-wizard>
+</div>

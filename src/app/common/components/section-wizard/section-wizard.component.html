@@ -1,0 +1,113 @@
+<app-top-navbar *ngIf="mobileView" [headerDetails]="navbarDetails" (leftheaderClicked)="onNavigate('L')"
+  (rightheaderClicked)="onNavigate('R')"></app-top-navbar>
+<div class="fixed-top grad1" *ngIf="mobileView">
+  <div class="row subheader">
+    <div class="col-10">
+      <div class="dropdown" appDropdown>
+        <button class="btn dropdown-toggle float-left" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false" *ngIf="selectedSectionId >=0">Sections {{selectedSectionId + 1}}
+          of
+          {{inspectionSections?.length}}</button>
+        <div class="dropdown-menu section-dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <ng-container>
+            <a class="dropdown-item" *ngFor="let section of inspectionSections;let id=index"
+              (click)="onSectionClicked(id)">{{section?.sectionName}}</a>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+    <div class="col-2" *ngIf="formName=='Notus Safety Inspection' && selectedSectionId >= 1 && user?.role !== 'Admin'">
+      <div>
+        <button class="btn float-right" (click)="saveSectionDetails('Completed',true)"><i class="pi pi-plus"
+            aria-hidden="true"></i></button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <p class="selectedoption">{{selectedOption}}</p>
+  </div>
+</div>
+<div id="content" class="section-content" [ngClass]="{'edit-section-content': editId}">
+  <div class="container page-container section-container scroll-content"
+    [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer':mobileView}">
+    <div class="row justify-content-center preview-info text-center" *ngIf="preview">
+      <div class="col-12">
+        <b>This is a preview only! Any changes made to this form will not be saved!</b>
+      </div>
+    </div><br />
+    <div class="row" *ngIf="!mobileView">
+      <div class="col-lg-6 col-md-6">
+        <div class="float-left msg">{{message}}</div>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <div class="dropdown float-right" appDropdown>
+          <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">Sections</button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+            <ng-container>
+              <a class="dropdown-item" *ngFor="let section of inspectionSections;let id=index"
+                (click)="onSectionClicked(id)">{{section?.sectionName}}</a>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="row" *ngIf="!mobileView">
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-header">{{selectedOption}}</div>
+          <div class="col-lg-12 col-md-12 card-body">
+            <app-dynamic-form [formName]="formName" [sectionName]="selectedOption" [editId]="editId"
+              (buttontriggered)="eventTriggered($event)"></app-dynamic-form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="mobileView">
+      <div class="col-lg-12 col-md-12">
+        <app-dynamic-form [formName]="formName" [sectionName]="selectedOption" [editId]="editId"
+          (buttontriggered)="eventTriggered($event)"></app-dynamic-form>
+      </div>
+    </div>
+    <div class="row" *ngIf="!preview">
+      <div class="col-lg-12 col-md-12">
+        <button type="button" [disabled]="childForm.formGroup?.invalid || status"
+          class="btn-black button float-left move" [ngClass]="{'btn-black': mobileView}" *ngIf="selectedSectionId > 0"
+          pButton (click)="saveSectionDetails(null,false);movePrevious()" label="Previous Section"></button>
+        <button type="button" [disabled]="childForm.formGroup?.invalid || status" class="btn-black button float-right"
+          [ngClass]="{'btn-black': mobileView}" *ngIf="inspectionSections?.length - 1 > selectedSectionId" pButton
+          (click)="saveSectionDetails(null,false);moveNext()" label="Next Section"></button>
+        <button type="button" [disabled]="childForm.formGroup?.invalid || status"
+          class="btn-black button complete-button float-right" [ngClass]="{'btn-black': mobileView}"
+          *ngIf="inspectionSections?.length - 1 == selectedSectionId" pButton (click)="onComplete()"
+          label="Complete"></button>&#8196;
+        <button type="button" [disabled]="status" class="btn-black button add-new-button float-right"
+          *ngIf="inspectionSections?.length - 1 == selectedSectionId && !mobileView"
+          [ngClass]="{'btn-black': mobileView}" pButton (click)="saveSectionDetails('Completed',true)"
+          label="Add New Blade Report"></button>
+      </div>
+    </div>
+  </div>
+</div>
+<nav class="navbar fixed-bottom bg-light bottomTray" *ngIf="mobileView && hideNav === 'RedBottomTray'">
+  <div class="col-4 vertical-align-center">
+    <i class="material-icons botton-nav-icon float-left" *ngIf="selectedSectionId !== 0"
+      (click)="onSectionClicked(selectedSectionId-1)">keyboard_arrow_left</i>
+    <i class="material-icons botton-nav-icon float-left disabled-icon"
+      *ngIf="selectedSectionId === 0">keyboard_arrow_left</i>
+
+    <i class="material-icons botton-nav-icon float-right" *ngIf="selectedSectionId !== inspectionSections?.length-1"
+      (click)="onSectionClicked(selectedSectionId+1)">keyboard_arrow_right</i>
+
+    <i class="material-icons botton-nav-icon float-right disabled-icon"
+      *ngIf="selectedSectionId === inspectionSections?.length-1">keyboard_arrow_right</i>
+  </div>
+  <div class="col-8 vertical-align-center">
+    <i class="material-icons botton-nav-icon float-right"
+      (click)="saveSectionDetails('Preview',false)">remove_red_eye</i>
+  </div>
+</nav>
+
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxEventEmitter)="dialogBoxAction($event)"
+  (dialogBoxClosed)="dialogBoxClose($event)"></app-dialog-box>

@@ -1,0 +1,29 @@
+<div class="container field-container">
+  <div class="row">
+    <div class="col-6">
+      {{question?.questionName}}
+    </div>
+    <div class="col-6">
+      <button type="button" class="btn button float-right" (click)="countIncrement()">Add
+        {{question?.inputTypesProperty?.element}}
+      </button>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-12">
+      <ng-container *ngIf="fieldQuestions?.length > 0">
+        <ng-container *ngFor="let id of count;let i = index">
+          <ng-container *ngIf="id !== -1">
+            {{question?.inputTypesProperty?.element}} {{i + 1}}
+            <i class="material-icons float-right cursor-pointer" (click)="countDecrement(i)">clear</i>
+            <div class="child-form">
+              <app-dynamic-form [fieldQuestions]="fieldQuestions" [answers]="value" [elementArray]="id" [editId]="editId"
+                (buttontriggered)="eventTriggered($event,id)" [imageData]="imageData"></app-dynamic-form>
+            </div>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>

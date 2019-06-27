@@ -1,0 +1,108 @@
+  .btn-black {
+    background-color: #000000 !important;
+  }
+  .dropdown-menu{
+    padding: 0px;
+    position: absolute;
+  }
+  .section-container .card{
+    width: 100%;
+  }
+  .add-new-button{
+    margin-right: 5px !important;
+  }
+  .float-left.msg{
+    color: #003b45 !important;
+  }
+  .section-container .button.ui-button{
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+   .fixed-top.grad1{
+    background: var(--main-bg-color);
+    text-align: center;
+    height:auto;
+    vertical-align:fit-content;
+    color:white; 
+    font-family:Helvetica;
+    font-style:Title Regular;
+    vertical-align: middle;
+  }
+    .fixed-top .dropdown, .fixed-top .btn.dropdown-toggle{
+      background-color: transparent!important;
+      border: 1px solid transparent !important;
+    }
+  .pi.pi-plus{
+    font-size: 24px;
+    padding-top: 5px;
+    vertical-align: bottom;
+  }
+  
+    @media (max-width: 768px){
+      .button-row{
+        justify-content: center;
+      }
+      .section-container ,.dropdown-item{
+        white-space: normal;
+      }
+      .section-container .card{
+        width: 100%;
+        margin-top: -30px !important;
+      }
+      .section-content, .edit-section-content {
+        margin-top: 10% !important;
+      }
+      .fixed-top .subheader{
+        font-family: Helvetica;
+        font-size: 15px;
+        margin-top:11%;
+       }
+       .dropdown-menu.section-dropdown-menu {
+        margin-top: 7% !important;
+      }
+    }
+  @media (max-width: 414px) {
+    .container.section-container {
+      padding-left: 5% !important;
+      padding-right: 5% !important;
+      }
+    .fixed-top .subheader{
+      font-family: Helvetica;
+      font-size: 15px;
+      margin-top: 11%;
+     }
+     .dropdown-menu.section-dropdown-menu {
+      margin-top: 11% !important;
+    }
+    .container.section-container{
+      padding-bottom:15%;
+    }
+  }
+    @media (max-width: 380px) and (min-height: 812px){ 
+    .fixed-top .subheader{
+      font-family: Helvetica;
+      font-size: 15px;
+      margin-top: 14%;
+     }
+     .container.section-container{
+      padding-bottom:15%;
+    }
+  }
+
+  /* bottom tray display in inspection instaed of navbar */
+  .bottomTray {
+    height: 45px !important;
+    background-color: #d1363f !important;
+    color: white !important;
+  }
+  @media(min-height: 740px) and (max-height: 815px) {
+    .bottomTray {
+      height: 70px !important;
+    }
+  }
+  .selectedoption {
+    padding: 0px 15px 0px 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }

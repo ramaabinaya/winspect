@@ -1,0 +1,21 @@
+<div class="container-fluid form-container"
+  [ngClass]="{'webViewContainer':!mobileView,'mobileViewContainer':mobileView}" *ngIf="!viewCamera">
+  <div class="ui-grid ui-grid-responsive ui-fluid">
+    <form *ngIf="formGroup" [formGroup]="formGroup" class="ui-fluid dynamic-form">
+      <dynamic-primeng-form [group]="formGroup" [layout]="formLayout" [model]="formModel"
+        (change)="onValueChange($event)" appInput [navbarType]="'RedBottomTray'"></dynamic-primeng-form>
+    </form>
+  </div><br /><br />
+
+  <div class="ui-g">
+    <div *ngFor="let button of buttonModel">
+      <button type="button" class="btn button-dynamic ui-g-c-4" [disabled]=" formGroup?.invalid && button?.disabled"
+        (click)="onClick(button?.hasMethod,sectionName)" pButton [label]=button?.label></button>
+    </div>
+  </div>
+</div>
+<p-confirmDialog></p-confirmDialog>
+<app-camera *ngIf="viewCamera" [option]="imgOption" [sectionName]="saveOption" [imgData]="imageData"
+  (imageCapturedData)="onCapturedImage($event)"></app-camera>
+<app-dialog-box *ngIf="display" [dialogBoxDetails]="dialogBoxDetails" (dialogBoxClosed)="dialogBoxClose($event)">
+</app-dialog-box>

@@ -1,0 +1,327 @@
+[
+  {
+    "siteLocation": "Nine Canyon 1,Wa,Benton",
+    "windLocations": [
+      {
+        "uniqueId": 45253,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0936,
+        "longitude": -119.0844
+      },
+      {
+        "uniqueId": 45255,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0942,
+        "longitude": -119.0863
+      },
+      {
+        "uniqueId": 45256,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0948,
+        "longitude": -119.0886
+      },
+      {
+        "uniqueId": 45257,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0954,
+        "longitude": -119.0904
+      },
+      {
+        "uniqueId": 45259,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0961,
+        "longitude": -119.0921
+      },
+      {
+        "uniqueId": 45260,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0972,
+        "longitude": -119.0934
+      },
+      {
+        "uniqueId": 45261,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.098,
+        "longitude": -119.0951
+      },
+      {
+        "uniqueId": 45262,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0984,
+        "longitude": -119.097
+      },
+      {
+        "uniqueId": 45263,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0987,
+        "longitude": -119.0989
+      },
+      {
+        "uniqueId": 45264,
+        "siteName": "Nine Canyon 1",
+        "latitude": 46.0991,
+        "longitude": -119.1008
+      }
+    ]
+  },
+  {
+    "siteLocation": "Marengo Wind 2,Wa,Columbia",
+    "windLocations": [
+      {
+        "uniqueId": 45291,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3473,
+        "longitude": -117.8595
+      },
+      {
+        "uniqueId": 45292,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.348,
+        "longitude": -117.8383
+      },
+      {
+        "uniqueId": 45293,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3482,
+        "longitude": -117.8611
+      },
+      {
+        "uniqueId": 45294,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.349,
+        "longitude": -117.8401
+      },
+      {
+        "uniqueId": 45295,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3499,
+        "longitude": -117.8418
+      },
+      {
+        "uniqueId": 45296,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3517,
+        "longitude": -117.8598
+      },
+      {
+        "uniqueId": 45297,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3523,
+        "longitude": -117.8619
+      },
+      {
+        "uniqueId": 45298,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3529,
+        "longitude": -117.8223
+      },
+      {
+        "uniqueId": 45299,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3529,
+        "longitude": -117.8202
+      },
+      {
+        "uniqueId": 45300,
+        "siteName": "Marengo Wind 2",
+        "latitude": 46.3529,
+        "longitude": -117.8244
+      }
+    ]
+  },
+  {
+    "siteLocation": "Lower Snake River 1,WA,Garfield",
+    "windLocations": [
+      {
+        "uniqueId": 45495,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4718,
+        "longitude": -117.8177
+      },
+      {
+        "uniqueId": 45496,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4725,
+        "longitude": -117.7654
+      },
+      {
+        "uniqueId": 45497,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4725,
+        "longitude": -117.8264
+      },
+      {
+        "uniqueId": 45498,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.473,
+        "longitude": -117.8477
+      },
+      {
+        "uniqueId": 45499,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4731,
+        "longitude": -117.8292
+      },
+      {
+        "uniqueId": 45500,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4731,
+        "longitude": -117.8519
+      },
+      {
+        "uniqueId": 45501,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4733,
+        "longitude": -117.768
+      },
+      {
+        "uniqueId": 45502,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4733,
+        "longitude": -117.8325
+      },
+      {
+        "uniqueId": 45503,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4737,
+        "longitude": -117.8546
+      },
+      {
+        "uniqueId": 45504,
+        "siteName": "Lower Snake River 1",
+        "latitude": 46.4738,
+        "longitude": -117.8187
+      }
+    ]
+  },
+  {
+    "siteLocation": "Stateline Wind,WA,Walla Walla",
+    "windLocations": [
+      {
+        "uniqueId": 44979,
+        "siteName": "Stateline Wind",
+        "latitude": 46.001,
+        "longitude": -118.8365
+      },
+      {
+        "uniqueId": 44980,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0012,
+        "longitude": -118.7627
+      },
+      {
+        "uniqueId": 44981,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0012,
+        "longitude": -118.8486
+      },
+      {
+        "uniqueId": 44982,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0013,
+        "longitude": -118.7783
+      },
+      {
+        "uniqueId": 44983,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0013,
+        "longitude": -118.737
+      },
+      {
+        "uniqueId": 44984,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0015,
+        "longitude": -118.8372
+      },
+      {
+        "uniqueId": 44985,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0017,
+        "longitude": -118.8492
+      },
+      {
+        "uniqueId": 44986,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0018,
+        "longitude": -118.7789
+      },
+      {
+        "uniqueId": 44987,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0019,
+        "longitude": -118.7375
+      },
+      {
+        "uniqueId": 44988,
+        "siteName": "Stateline Wind",
+        "latitude": 46.0019,
+        "longitude": -118.8123
+      }
+    ]
+  },
+  {
+    "siteLocation": "Wild Horse 1,WA,Kittitas",
+    "windLocations": [
+      {
+        "uniqueId": 45708,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9892,
+        "longitude": -120.1678
+      },
+      {
+        "uniqueId": 45709,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9911,
+        "longitude": -120.1747
+      },
+      {
+        "uniqueId": 45710,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9923,
+        "longitude": -120.1751
+      },
+      {
+        "uniqueId": 45711,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9938,
+        "longitude": -120.1778
+      },
+      {
+        "uniqueId": 45712,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9951,
+        "longitude": -120.1782
+      },
+      {
+        "uniqueId": 45713,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9964,
+        "longitude": -120.1569
+      },
+      {
+        "uniqueId": 45714,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9968,
+        "longitude": -120.1845
+      },
+      {
+        "uniqueId": 45715,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9977,
+        "longitude": -120.1587
+      },
+      {
+        "uniqueId": 45716,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.998,
+        "longitude": -120.1849
+      },
+      {
+        "uniqueId": 45717,
+        "siteName": "Wild Horse 1",
+        "latitude": 46.9989,
+        "longitude": -120.1593
+      }
+    ]
+  }
+]

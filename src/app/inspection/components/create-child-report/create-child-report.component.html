@@ -1,0 +1,36 @@
+<p-dialog header="Choose Blade type" [closable]="false" [(visible)]="bladeDetails && bladeDetails['bladeView']"
+  modal="modal" [@.disabled]="true" [responsive]="true" [width]="350">
+  <span>Choose blade type for turbine Number:{{commonQuestionData?.windturbineId}}</span>
+  <img class="blade-icon" src="./assets/images/markedbladeicongreen.png" usemap="#markedbladeMap" />
+  <map name="markedbladeMap">
+    <area shape="poly" coords="116,122,143,115,169,121,114,76,172,76,125,29,158,20,142,2" title="Blade A"
+      (click)="bladeDetails['bladeType']='A';displayDialog=true;bladeDetails['bladeView'] = false">
+    <area shape="poly" coords="94,162,119,205,102,188,74,235,44,188,19,214,43,246,4,245" title="Blade B"
+      (click)="bladeDetails['bladeType']='B';displayDialog=true;bladeDetails['bladeView'] = false">
+    <area shape="poly" coords="166,207,193,161,185,189,213,235,250,196,273,222,257,246,284,244" title="Blade C"
+      (click)="bladeDetails['bladeType']='C';displayDialog=true;bladeDetails['bladeView'] = false">
+  </map>
+  <p-footer>
+    <button type="button" pButton class="btn" (click)="onCloseDialog()" label="Cancel"></button>
+  </p-footer>
+</p-dialog>
+<p-dialog header="Selected Wind Turbine" [closable]="false" [(visible)]="displayDialog" modal="modal"
+  [@.disabled]="true" [responsive]="true" [width]="350" [minWidth]="200" [minY]="70">
+  <span *ngIf="bladeDetails?.bladeType && bladeDetails?.bladeType !=='M'">Blade type selected
+    for Report Creation is: {{bladeDetails?.bladeType}} </span>
+  <p-footer>
+    <button type="button" pButton class="btn" (click)="getFormDetails('Notus Blade Damage Report')"
+      label="Create Report"></button>&nbsp;
+    <button type="button" pButton class="btn" (click)="onCloseDialog()" label="Cancel"></button>
+  </p-footer>
+</p-dialog>
+<p-dialog header="Message" (onHide)="onCloseDialog()" [(visible)]="dialogVisible" modal="true" [@.disabled]="true"
+  [responsive]="true" [width]="400" [minWidth]="200" [minY]="70">
+  <span *ngIf="bladeDetails?.bladeType && bladeDetails?.bladeType !=='M'">choose the report type </span>
+  <p-footer>
+    <button type="button" pButton class="btn" (click)="getFormDetails('Notus Blade Damage Report')"
+      label="Damage Report"></button>
+    <button type="button" pButton class="btn" (click)="getFormDetails('')" label="Repair Report"
+      pTooltip='This will be implemented later!'></button>
+  </p-footer>
+</p-dialog>

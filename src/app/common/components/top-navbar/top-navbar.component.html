@@ -1,0 +1,64 @@
+<div class="grad fixed-top container-fluid">
+  <div class="row sec-first">
+    <div class="col-2">
+      <svg class="svgicon float-left" *ngIf="headerDetails?.leftIcon" (click)="leftHeaderClicked($event)"
+        [routerLink]="route">
+        <use [attr.xlink:href]="headerDetails?.leftIcon"></use>
+      </svg>
+      <p class="float-left mobile-page-header" *ngIf="headerDetails?.leftheader" (click)="leftHeaderClicked($event)">
+        {{headerDetails?.leftheader}}</p>
+    </div>
+    <div class="col-8" *ngIf="!headerDetails?.headerTab">
+      <p class="mobile-page-header">{{headerDetails?.header}}</p>
+    </div>
+    <div class="col-8" *ngIf="headerDetails?.headerTab">
+      <div class="btn-group">
+        <button [ngClass]="{'btn-tab-active': firstTab}" (click)="tabOptionEmit(true)">{{headerTab?.tab1}}</button>
+        <button [ngClass]="{'btn-tab-active': !firstTab, 'btn-tab-disabled': disconnected}"
+          (click)="tabOptionEmit(false)">{{headerTab?.tab2}}</button>
+      </div>
+    </div>
+    <div class="col-2">
+      <p class="float-right mobile-page-header" (click)="rightHeaderClicked($event)"
+        *ngIf="(!disconnected && headerDetails?.rightheader === 'Sync') || headerDetails?.rightheader !== 'Sync'"
+        style="margin-top:0px">{{headerDetails?.rightheader}}</p>
+      <svg class="svgicon float-right" *ngIf="!disconnected && headerDetails?.rightIcon"
+        (click)="rightHeaderClicked($event)" [routerLink]="route">
+        <use [attr.xlink:href]="headerDetails?.rightIcon"></use>
+      </svg>
+    </div>
+  </div>
+  <div class="row sec-second bottom-edge-shadow" *ngIf="headerDetails?.searchbox">
+    <div class="col-10 col-md-11 text-muted mobile-search-box">
+      <div class="inputWithIcon">
+        <p-autoComplete type="text" id="searchbox" placeholder="{{headerDetails?.placeholder}}"
+          [style]="{'width':'100%'}" (onClear)="onClear($event)" [(ngModel)]="selectedValue" (onKeyUp)="onKeyUp($event)"
+          appInput></p-autoComplete>
+        <svg class="float-left" width="32px" height="32px">
+          <use xlink:href="assets/symbol-defs.svg#search"></use>
+        </svg>
+        <svg width="20px" height="20px" *ngIf="selectedValue?.length > 0" (click)="onClear($event)" class="closeicon">
+          <use xlink:href="assets/symbol-defs.svg#icon-cross"></use>
+        </svg>
+      </div>
+    </div>
+    <div class="col-2 col-md-1 text-muted">
+      <div ngbDropdown placement="bottom-right" #myDrop="ngbDropdown">
+        <svg class="float-right" width="32px" height="32px" id="filter" ngbDropdownToggle>
+          <use xlink:href="assets/symbol-defs.svg#filter"></use>
+        </svg>
+        <div class="dropdown-menu" ngbDropdownMenu aria-labelledby="dropdownBasic2">
+
+          <div *ngFor="let sort of sortingDetails; let id=index">
+            <button class="dropdown-item" id="done-icon"
+              (click)="sortingReport($event, sort?.value, myDrop.value)">{{sort.label}}
+              <svg class="float-right tik-mark" width="28px" height="28px">
+                <use xlink:href="assets/symbol-defs.svg#icon-done"></use>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

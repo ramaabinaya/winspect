@@ -1,0 +1,15 @@
+<div class="custom-timepicker-container">
+  <div class="row">
+    <div class="col-12">
+      <div class="ui-inputgroup">
+        <input *ngIf="timePicker === 'default'" type="time" pInputText theme="material-blue"
+          [value]="editTime ? editTime : selectedTime" start='00:00' end="23:59" (change)="getTime($event)" appInput
+          [navbarType]="'RedBottomTray'">
+        <input *ngIf="timePicker === 'custom'" pInputText theme="material-blue"
+          [value]="editTime ? editTime : selectedTime" start='00:00' end="23:59" (blur)="getValue($event)"
+          (focus)="open($event)" appInput [navbarType]="'RedBottomTray'">
+        <span class="ui-inputgroup-addon"><i class="material-icons clock-icon">alarm_add</i></span>
+      </div>
+    </div>
+  </div>
+</div>

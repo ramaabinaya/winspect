@@ -1,0 +1,9 @@
+<form *ngIf="group" [formGroup]="group">
+  <app-custom-field-form-control
+    [editId]= " model?.editId"
+    [question]="model?.question"
+    [formControlName]="model?.id" 
+    [id]="bindId ? model?.id : null"  
+    [ngClass]="[getClass('element', 'control'), getClass('grid', 'control')]"
+    (change)="onChange($event)"></app-custom-field-form-control>
+</form>

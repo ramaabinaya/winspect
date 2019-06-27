@@ -1,0 +1,55 @@
+<br />
+<div class="container login-card">
+  <div class="row">
+    <div class="col-12">
+      <img class="responsive center" src="./assets/images/app_logo.png" height="90%" width="50%" />
+    </div>
+  </div>
+  <div class="row" *ngIf="error === true && errorMsg">
+    <div class="col-12">
+      <p class="errorInfo text-center">{{errorMsg}}</p>
+    </div>
+  </div>
+  <div class="row" *ngIf="error === false && errorMsg">
+    <div class="col-12">
+      <p class="alert alert-success text-center">{{errorMsg}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <form #f="ngForm">
+        <ng-container *ngIf="!forgotPasswordView">
+          <div class="form-group">
+            <input type="email" class="form-control" name="loginemail" placeholder="Enter Email" ngModel required>
+          </div>
+          <div class="form-group">
+            <input [type]="show ? 'text' : 'password'" class="form-control" name="loginpassword"
+              placeholder="Enter Password" ngModel required>
+            <i class="material-icons password-icon" (click)="show = !show;" *ngIf="!show">visibility_off</i>
+            <i class="material-icons password-icon" (click)="show = !show;" *ngIf="show">visibility</i>
+          </div>
+          <div class="form-group">
+            <button type="submit" [ngClass]="{'disable-click': !loginForm?.valid}" class="btn btn-primary button-login"
+              (click)="onSignIn()">LOG IN</button>
+          </div>
+        </ng-container>
+      </form>
+      <form #forgotForm="ngForm" *ngIf="forgotPasswordView">
+        <ng-container *ngIf="forgotPasswordView">
+          <div class="form-group">
+            <input type="email" class="form-control" name="email" placeholder="Enter Email" ngModel required>
+          </div>
+          <div class="form-group">
+            <button type="submit" [ngClass]="{'disable-click': !forgotForm?.valid}" class="btn btn-primary button-login"
+              (click)="forgotPassword()">Reset Password</button>
+          </div>
+        </ng-container>
+      </form>
+      <h6 style="text-align: center;" *ngIf="!disconnected"><a class="cursor-pointer" (click)="forgot()"
+          *ngIf="!forgotPasswordView">Forgot
+          Password?</a></h6>
+      <h6 style="text-align: left;"><a class="cursor-pointer" (click)="forgotPasswordView = false; error = undefined"
+          *ngIf="forgotPasswordView">Back</a></h6>
+    </div>
+  </div>
+</div>
