@@ -104,7 +104,7 @@ stage('deploy') {
             }
          steps {
          withAWS(region:'us-west-2'){
-         cfnUpdate(stack:'app',url:"https://acc-jens.s3-us-west-2.amazonaws.com/builds/winspect/application.yaml",params:[
+         cfnUpdate(stack:'app',file:"application.yaml",params:[
          'AmiId':'ami-005bdb005fb00e791',
          'DesiredCapacity':'1',
          'KeyName':'key',

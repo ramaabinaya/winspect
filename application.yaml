@@ -1,0 +1,220 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Deploy an application in with Autoscaling group and Load balancer
+
+Parameters:
+  AmiId:
+    Type: AWS::EC2::Image::Id
+    Default: ami-005bdb005fb00e791
+  DesiredCapacity:
+    Type: Number
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+  LoadBalancerArn:
+    Type: String
+  AutoScalingGroupName:
+    Type: String
+  IamInstanceProfile:
+    Type: String
+    Default: ""
+  InstanceSecurityGroups:
+    Type: List<AWS::EC2::SecurityGroup::Id>
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+    - t2.small
+    - t2.micro
+    - m1.small
+    - m1.medium
+  MaxSize:
+    Type: Number
+  MinSize:
+    Type: Number
+  EbsOptimized:
+    Type: String
+    AllowedValues:
+    - true
+    - false
+    Default: false   
+  AssociatePublicIpAddress:
+    Type: String
+    AllowedValues:
+    - true
+    - false
+    Default: true
+  InstancellocatedStorage:
+    Default: '50'
+    Description: The size of the database(Gb)
+    Type: Number
+    MinValue: '5'
+    MaxValue: '1024'
+    ConstraintDescription: must be between 5 and 1024Gb.
+  SpotPrice:
+    Type: String
+    Default: '0.133'
+  MaxBatchSize:
+    Type: Number
+  MinInstancesInService:
+    Type: Number
+  PauseTime:
+    Type: String
+    Description: (eg.) PT10M
+  WaitOnResourceSignals:
+    Type: String
+    AllowedValues:
+    - true
+    - false
+    Default: false
+  version:
+    Type: String
+
+Conditions:
+  InstanceProfileProvided: !Not [ !Equals [ "", !Ref IamInstanceProfile ] ]
+  UseSpotInstances: !Not [ !Equals [ "", !Ref SpotPrice ] ]
+
+
+Resources:
+  LoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancerArn
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref DefaultTargetGroup 
+  DefaultTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VpcId
+      Port: 80
+      Protocol: HTTP   
+      HealthCheckIntervalSeconds: 15
+      HealthCheckPath: '/'
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+  AutoScalingGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    Properties:
+      AutoScalingGroupName: !Ref AutoScalingGroupName
+      LaunchConfigurationName: !Ref LaunchConfig
+      MaxSize: !Ref MaxSize
+      MinSize: !Ref MinSize
+      DesiredCapacity: !Ref DesiredCapacity
+      VPCZoneIdentifier: !Ref Subnets
+      TargetGroupARNs:
+      - !Ref DefaultTargetGroup
+    # Default target group should be associated
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: !Ref MaxBatchSize
+        MinInstancesInService: !Ref MinInstancesInService
+        PauseTime: !Ref PauseTime
+        WaitOnResourceSignals: !Ref WaitOnResourceSignals
+
+  LaunchConfig:
+    Type: "AWS::AutoScaling::LaunchConfiguration"
+    Properties:
+      KeyName: !Ref KeyName
+      ImageId: !Ref AmiId
+      BlockDeviceMappings: 
+      - DeviceName: "/dev/sda1"
+        Ebs: 
+          VolumeSize: !Ref InstancellocatedStorage
+          VolumeType: "gp2"
+      IamInstanceProfile: !If [InstanceProfileProvided, !Ref IamInstanceProfile, !Ref "AWS::NoValue"]
+      SecurityGroups: !Ref InstanceSecurityGroups
+      InstanceType: !Ref InstanceType
+      EbsOptimized: !Ref EbsOptimized
+      AssociatePublicIpAddress: !Ref AssociatePublicIpAddress
+      SpotPrice: !If [UseSpotInstances, !Ref SpotPrice, !Ref "AWS::NoValue"]
+      UserData:
+        Fn::Base64: 
+          !Sub |
+            #!/bin/bash                                                                     
+            PUPPET_AGENT_VERSION="6.1.0"
+            UBUNTU_CODENAME="bionic"
+
+            sudo apt-get update 
+            sudo apt-get install --no-install-recommends -y wget ca-certificates lsb-release
+            sudo wget https://apt.puppetlabs.com/puppet6-release-"$UBUNTU_CODENAME".deb
+            sudo dpkg -i puppet6-release-"$UBUNTU_CODENAME".deb
+            sudo rm puppet6-release-"$UBUNTU_CODENAME".deb
+            sudo apt-get update
+            sudo apt-get install --no-install-recommends -y puppet-agent="$PUPPET_AGENT_VERSION"\
+            -1"$UBUNTU_CODENAME"
+            sudo apt-get install -y git
+            sudo mkdir -p /opt/puppetforge/modules
+            sudo chmod 777 /opt/puppetforge/modules
+
+            sudo /opt/puppetlabs/bin/puppet --version
+           
+           
+            #!/bin/bash
+            PUPPET="/opt/puppetlabs/bin/puppet"
+            PUPPETFORGE_MODULES_PATH="/opt/puppetforge/modules"
+            GIT_HOST="gitlab.centizenapps.com"
+            GIT_USERNAME="zen"
+             #TODO: This has to be fetched from Environment or from AWS Secrets Manager
+            GIT_ACCESSKEY='S1vXPYJdB5WMADHy5PT6'
+
+            function puppet_module_install() {
+            #TODO: This install fails if not run with sudo. Or the modules path should be owned by the user who is running this command.
+            ${!PUPPET} module install -f --target-dir ${!PUPPETFORGE_MODULES_PATH} $1 --version $2
+            }
+
+            function centizen_module_install() {
+            # Check if module directory exists. If yes, just pull
+            if [ -d "${!PUPPETFORGE_MODULES_PATH}/$2" ]; then
+            echo "Module $2 already present."
+            else
+            git clone  https://${!GIT_USERNAME}:${!GIT_ACCESSKEY}@${!GIT_HOST}/devops/$1.git ${!PUPPETFORGE_MODULES_PATH}/$2
+            fi
+            }
+
+            echo "Installing puppet forge opensource modules"
+            puppet_module_install puppetlabs-stdlib 5.1.0
+            puppet_module_install puppetlabs-docker 3.1.0
+            puppet_module_install puppetlabs-apt 6.2.1
+            puppet_module_install puppet-nodejs 6.0.0
+            puppet_module_install puppet-wget 2.0.1
+            puppet_module_install puppetlabs-apache 4.0.0
+            puppet_module_install puppetlabs-concat 5.3.0
+            puppet_module_install puppetlabs-mysql 8.1.0
+            puppet_module_install puppet-letsencrypt 4.0.0
+            puppet_module_install puppetlabs-inifile 3.0.0
+
+            echo "Installing puppet forge centizen modules"
+            centizen_module_install puppet-utilities utilities
+            centizen_module_install puppet-winspect winspect
+
+            sudo /opt/puppetlabs/bin/puppet apply --modulepath=/opt/puppetforge/modules -e 'class {"winspect": version => "${version}"}'
+
+Outputs:
+  AutoScalingGroupName:
+    Description: AutoScalingGroup which is part of this stack
+    Value: !Ref AutoScalingGroup
+  AmiId:
+    Description: AMI ID deployed
+    Value: !Ref AmiId
+  StackId:
+    Description: Name of the stack deployed
+    Value: !Ref AWS::StackId
+  IamInstanceProfile:
+    Description: IAM instance profile attached
+    Value: !Ref IamInstanceProfile
+  LaunchConfigurationName:
+    Description: LaunchConfiguration deployed
+    Value: !Ref LaunchConfig
+  LoadBalancerListener:
+    Description: LoadBalancerListener deployed
+    Value: !Ref LoadBalancerListener
+  TargetGroup:
+    Description: TargetGroup deployed
+    Value: !Ref DefaultTargetGroup
