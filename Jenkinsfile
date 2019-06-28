@@ -120,7 +120,7 @@ stage('deploy') {
          'MaxBatchSize':1,
          'MinInstancesInService':0,
          'PauseTime':'PT5M',
-         'version':"${version}",  
+         'version':"20190628.0549",  
          'SpotPrice':""
           ])
          }
