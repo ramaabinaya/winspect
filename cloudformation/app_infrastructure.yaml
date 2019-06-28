@@ -1,0 +1,254 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Application Infrastructure
+Parameters:
+  vpcId:
+    Description: VPC ID where this security group should be created
+    Type: AWS::EC2::VPC::Id
+  DBUser:
+    Description: The database admin account username
+    Type: String
+    MinLength: '1'
+    MaxLength: '16'
+  DBPassword:
+    NoEcho: 'true'
+    Description: The database admin account password
+    Type: String
+    MinLength: '1'
+    MaxLength: '41'
+  DBInstanceClass:
+    Type: String
+    Default: db.t2.micro
+    AllowedValues:
+    - db.t1.micro
+    - db.t2.micro
+    - db.t2.small
+    - db.t2.medium
+    - db.t2.large
+    Description: Enter DBInstance class. Default is t2.micro.
+  DBAllocatedStorage:
+    Default: '50'
+    Description: The size of the database (Gb)
+    Type: Number
+    MinValue: '5'
+    MaxValue: '1024'
+    ConstraintDescription: must be between 5 and 1024Gb.
+  DBName:
+    Description: Enter a Name u want
+    Type: String
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+  MultiAZ:
+    Description: Multi-AZ master database
+    Type: String
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+    ConstraintDescription: must be true or false.
+  LoadBalancerName:
+    Type: String
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  HostedZoneId:
+    Type: String
+    Description: Enter HostedZoneId
+    Default: ""
+  RecordSetType:
+    Type: String
+    Default: CNAME
+    AllowedValues:  
+    - A
+    - CNAME
+    Description: Enter RecordSet Type 
+  RecordSetName:
+    Type: String
+    Description: Enter RecordSet Name (eg) any.example.com
+  
+
+Conditions:
+  UseHostZoneId: !Not [ !Equals [ "", !Ref HostedZoneId ] ]
+ 
+Resources:
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Ref LoadBalancerName
+      IpAddressType: ipv4
+      Scheme: internet-facing
+      Subnets: !Ref Subnets
+      SecurityGroups: 
+      - !Ref ApplicationLoadBalancerSecurityGroup
+      - !Ref ApplicationIngressSecurityGroup
+  ApplicationDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Condition: UseHostZoneId
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Comment: DNS name for Application Load Balancer
+      Name: !Ref RecordSetName 
+      Type: !Ref RecordSetType
+      TTL: '300'
+      ResourceRecords:
+      - !GetAtt LoadBalancer.DNSName
+  AppInfrastructureIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 
+        Fn::Join:
+        - ''
+        - - !Ref AWS::StackName
+          - "IAMRole"     
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+  AppInfrastructureIAMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: 
+        Fn::Join:
+        - ''
+        - - !Ref AWS::StackName
+          - "IAMInstanceProfile"
+      Path: "/"
+      Roles:
+      - Ref: AppInfrastructureIAMRole
+  AppInfrastructureIAMRolePolicies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: 
+        Fn::Join:
+        - ''
+        - - !Ref AWS::StackName
+          - "IAMRolePolicies"
+      PolicyDocument:
+        Statement:
+        - Sid: ListObjectsInBucket
+          Effect: Allow
+          Action:
+          - s3:ListBucket
+          Resource:
+          - arn:aws:s3:::centizen-winspect
+          - arn:aws:s3:::centizen-jenkins
+        - Sid: AllObjectActions
+          Effect: Allow
+          Action: s3:*Object
+          Resource:
+          - arn:aws:s3:::centizen-winspect/*
+          - arn:aws:s3:::centizen-jenkins/*
+        - Effect: Allow
+          Action:
+          - secretsmanager:GetSecretValue
+          - secretsmanager:DescribeSecret
+          Resource: "*"
+      Roles:
+      - Ref: AppInfrastructureIAMRole
+ 
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllowMajorVersionUpgrade: 'false'
+      AutoMinorVersionUpgrade: 'false'
+      BackupRetentionPeriod: '0'
+      DBName: !Ref DBName
+      Engine: MySQL
+      MasterUsername: !Ref DBUser
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref DBAllocatedStorage
+      MasterUserPassword: !Ref DBPassword
+      MultiAZ: !Ref MultiAZ
+      PubliclyAccessible: false
+      StorageType: gp2
+      VPCSecurityGroups:
+      - !GetAtt  RDSAccessSecurityGroup.GroupId
+    # Enable snapshot only when needed
+    #DeletionPolicy: Snapshot
+  RDSAccessSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: !Sub '${AWS::StackName} Access SG'
+      GroupDescription: !Sub 'Access for ${AWS::StackName}'
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '3306'
+        ToPort: '3306'
+        SourceSecurityGroupId: !Ref RDSIngressSecurityGroup
+      VpcId: !Ref vpcId
+  RDSIngressSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: !Sub '${AWS::StackName} Ingress SG'
+      GroupDescription: !Sub 'Access for ${AWS::StackName} Ingress SG'
+      VpcId: !Ref vpcId
+  RDSIngressSelfAllPorts:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt RDSIngressSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt RDSIngressSecurityGroup.GroupId
+      Description: All access to siblings
+  ApplicationLoadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${AWS::StackName} ApplicationLoadBalancerSecurityGroup SG'
+      GroupDescription: Access for Application_Load_Balancer
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: '80'
+        ToPort: '80'
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: '443'
+        ToPort: '443'  
+        CidrIp: 0.0.0.0/0
+      VpcId: !Ref vpcId      
+  ApplicationIngressSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup' 
+    Properties:
+      GroupName: !Sub '${AWS::StackName} ApplicationIngressSecurityGroup' 
+      GroupDescription: Access for Application_Load_Balancer Ingress SG
+      VpcId: !Ref vpcId       
+  ApplicationIngressSelfAllPorts:
+    Type: 'AWS::EC2::SecurityGroupIngress'
+    Properties:
+      GroupId: !GetAtt ApplicationIngressSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+      SourceSecurityGroupId: !GetAtt ApplicationIngressSecurityGroup.GroupId
+      Description: All access to siblings     
+Outputs:
+  StackId:
+    Description: Name of the stack deployed
+    Value: !Ref AWS::StackId
+  IamInstanceProfile:
+    Description: IAM instance profile attached
+    Value: !Ref AppInfrastructureIAMInstanceProfile
+  DBInstance:
+    Description: DB instance created
+    Value: !Ref DBInstance
+  RDSAccessSecurityGroup:
+    Description: RDSAccessSecurityGroup created
+    Value: !GetAtt RDSAccessSecurityGroup.GroupId
+  RDSIngressSecurityGroup:
+    Description: RDSIngressSecurityGroup created
+    Value: !GetAtt RDSIngressSecurityGroup.GroupId
+  ApplicationLoadBalancerSecurityGroup:
+    Description: ApplicationLoadBalancerSecurityGroup created
+    Value: !GetAtt ApplicationLoadBalancerSecurityGroup.GroupId
+  ApplicationIngressSecurityGroup:
+    Description: ApplicationIngressSecurityGroup created
+    Value: !GetAtt ApplicationIngressSecurityGroup.GroupId
+  LoadBalancerName:
+    Description: LoadBalancer deployed
+    Value: !Ref LoadBalancer
+ 
+
+
+  
