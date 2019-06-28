@@ -109,7 +109,7 @@ stage('deploy') {
          'DesiredCapacity':'1',
          'KeyName':'key',
          'LoadBalancerArn':"${output.LoadBalancerName}",
-         'AutoScalingGroupName':'winspect',
+         'AutoScalingGroupName':'wins',
          'IamInstanceProfile':"${output.IamInstanceProfile}",
          'InstanceSecurityGroups':"${output.RDSAccessSecurityGroup},${output.ApplicationIngressSecurityGroup}",
     
