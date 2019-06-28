@@ -84,7 +84,7 @@ stage('deploy infrastructure') {
             }
          steps {
          withAWS(region:'us-west-2'){
-         cfnUpdate(stack:'infrastructure',file:"app_infrastructure.yaml",params: app1deploy )
+         cfnUpdate(stack:'Infrastructure',file:"app_infrastructure.yaml",params: app1deploy )
          
         
          }
