@@ -93,7 +93,7 @@ stage('deploy infrastructure') {
 stage('defoutput'){
         steps{
             script{
-            output = cfnDescribe(stack:'infrastructure')
+            output = cfnDescribe(stack:'sasiinfrastructure')
             }
         }
     } 
