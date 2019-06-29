@@ -1,38 +1,30 @@
-Map app1deploy = [
+Map Infrastructureparameters = [
       vpcId: 'vpc-6bc66d13',
-      DBUser:'sasi',
-      DBPassword:'jenwins123',
+      DBUser:'notus',
+      DBPassword:'VillageandCity',
+      DBName:'windInspection',
+      LoadBalancerName:'winspectALB',
       Subnets:'subnet-870413dd,subnet-b066e99b',
-      LoadBalancerName:'Loadb',
       HostedZoneId:"",
-      RecordSetName:"",
-      DBName:'MyDataBase'
-      
-   ]      
+      RecordSetName:""
+      ]      
 
 def output
-
-
-
 pipeline {
   agent any
   parameters {
         booleanParam(
           defaultValue: false,
-            description: 'Do you want run build',
+            description: 'Do you want run build step ?',
             name: 'build')
         booleanParam(
           defaultValue: false,
-            description: 'Do u want run app',
-            name: 'app')
+            description: 'Do you want run app-infrastructure step ?',
+            name: 'appinfrastructure')
         booleanParam(
           defaultValue: false,
-            description: 'Do u want run app-infra',
-            name: 'appinfra')    
-             booleanParam(
-          defaultValue: false,
-            description: 'Do u want run tar and upload',
-            name: 'upload')    
+            description: 'Do u want run app ?',
+            name: 'application')        
     }
 
   options {
@@ -46,9 +38,8 @@ pipeline {
     }
     stage('Build and Package') {
          when {
-                // Only say hello if a "greeting" is requested
-                expression { params.build }
-            }
+            expression { params.build }
+         }
       steps {
         withDockerContainer("node:8") {
             sh "npm install"
@@ -59,10 +50,6 @@ pipeline {
       }
     }
     stage('tar and upload') {
-     when {
-                // Only say hello if a "greeting" is requested
-                expression { params.upload }
-            }
        steps {
           sh 'tar -cvf dist.tar dist'
           sh 'tar -cvf express.tar express'
@@ -71,62 +58,54 @@ pipeline {
                version = timestamp.format("yyyyMMdd.HHmm", TimeZone.getTimeZone('GMT'))
           }
           withAWS(region:'us-west-2') {
-          s3Upload(file:'dist.tar', bucket:'acc-jens', path:"builds/winspect/$version/")
-          s3Upload(file:'express.tar', bucket:'acc-jens', path:"builds/winspect/$version/")
-            }
-        }
+          s3Upload(file:'dist.tar', bucket:'centizen-jenkins', path:"builds/winspect/$version/")
+          s3Upload(file:'express.tar', bucket:'centizen-jenkins', path:"builds/winspect/$version/")
+          }
+       }
     }
  
-stage('deploy infrastructure') {
+    stage('deploy appinfrastructure') {
        when {
-                // Only say hello if a "greeting" is requested
-                expression { params.appinfra }
-            }
+          expression { params.appinfrastructure }
+      }
          steps {
          withAWS(region:'us-west-2'){
-         cfnUpdate(stack:'sasiinfrastructure',file:"deployment/app_infrastructure.yaml",params: app1deploy )
-         
-        
+         cfnUpdate(stack:'winspectApp-Infrastructure',file:"deployment/app_infrastructure.yaml",params: Infrastructureparameters ) 
+        }
+         } 
          }
-         
-    } }
-stage('defoutput'){
+    stage('defoutput'){
         steps{
             script{
-            output = cfnDescribe(stack:'sasiinfrastructure')
+            output = cfnDescribe(stack:'winspectApp-Infrastructure')
             }
         }
     } 
-stage('deploy') {
+    stage('appdeploy') {
         when {
-                // Only say hello if a "greeting" is requested
-                expression { params.app }
+                expression { params.application }
             }
          steps {
          withAWS(region:'us-west-2'){
-         cfnUpdate(stack:'app',file:"application.yaml",params:[
+         cfnUpdate(stack:'winspectapp',file:"deployment/application.yaml",params:[
          'AmiId':'ami-005bdb005fb00e791',
+         'AutoScalingGroupName':'winspectasg',
          'DesiredCapacity':'1',
-         'KeyName':'key',
-         'LoadBalancerArn':"${output.LoadBalancerName}",
-         'AutoScalingGroupName':'wins',
          'IamInstanceProfile':"${output.IamInstanceProfile}",
-         'InstanceSecurityGroups':"${output.RDSAccessSecurityGroup},${output.ApplicationIngressSecurityGroup}",
-    
-         'Subnets':'subnet-870413dd,subnet-b066e99b',
-         'VpcId':'vpc-6bc66d13',
-         'MaxSize':2,
-         'MinSize':1,
+         'InstanceSecurityGroups':"$output.RDSAccessSecurityGroup,$output.ApplicationIngressSecurityGroup,sg-0d7807373f29222fa",
+         'KeyName':'capps-tools',
+         'LoadBalancerArn':"${output.LoadBalancerName}",
          'MaxBatchSize':1,
+         'MaxSize':2,
          'MinInstancesInService':0,
-         'PauseTime':'PT5M',
-         'version':"20190628.1010",  
-         'SpotPrice':""
-          ])
+         'MinSize':1,
+         'PauseTime':'PT10M',
+         'SpotPrice':"",
+         'Subnets':'subnet-870413dd,subnet-b066e99b,subnet-c8b0b5b1,subnet-e7eccaac',
+         'version':"${version}",
+         'VpcId':'vpc-6bc66d13'])
          }
-       }
-     }
-  
-
+         } 
+    }
   }
 }
